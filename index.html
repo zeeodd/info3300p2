@@ -88,42 +88,42 @@
 
     <div id="album-flex">
       <div class="album-date">
-        <input id="album1" name="updateButton" type="image" src="college-dropout.jpg" value="College Dropout" onclick="updateGraph('The College Dropout')" />
+        <input id="album1" name="updateButton" type="image" src="college-dropout.jpg" value="College Dropout" onclick="updateArtist('kanye')" />
         2004
       </div>
 
       <div class="album-date">
-        <input id="album2" name="updateButton" type="image" src="late-registration.jpg" value="Late Registration" onclick="updateGraph('Late Registration')" />
+        <input id="album2" name="updateButton" type="image" src="late-registration.jpg" value="Late Registration" onclick="updateArtist('chance')" />
         2005
       </div>
 
       <div class="album-date">
-        <input id="album3" name="updateButton" type="image" src="graduation.jpg" value="Graduation" onclick="updateGraph('Graduation')" />
+        <input id="album3" name="updateButton" type="image" src="graduation.jpg" value="Graduation" onclick="updateAlbum('Graduation')" />
         2007
       </div>
 
       <div class="album-date">
-        <input id="album4" name="updateButton" type="image" src="808s.png" value="808s & Heartbreak" onclick="updateGraph('808s & Heartbreak')" />
+        <input id="album4" name="updateButton" type="image" src="808s.png" value="808s & Heartbreak" onclick="updateAlbum('808s & Heartbreak')" />
         2008
       </div>
 
       <div class="album-date">
-        <input id="album5" name="updateButton" type="image" src="twisted-fantasy.jpg" value="My Beautiful Dark Twisted Fantasy" onclick="updateGraph('My Beautiful Dark Twisted Fantasy')" />
+        <input id="album5" name="updateButton" type="image" src="twisted-fantasy.jpg" value="My Beautiful Dark Twisted Fantasy" onclick="updateAlbum('My Beautiful Dark Twisted Fantasy')" />
         2010
       </div>
 
       <div class="album-date">
-        <input id="album6" name="updateButton" type="image" src="watch-the-throne.jpg" value="Watch the Throne" onclick="updateGraph('Watch the Throne')" />
+        <input id="album6" name="updateButton" type="image" src="watch-the-throne.jpg" value="Watch the Throne" onclick="updateAlbum('Watch the Throne')" />
         2011
       </div>
 
       <div class="album-date">
-        <input id="album7" name="updateButton" type="image" src="yeezus.png" value="Yeezus" onclick="updateGraph('Yeezus')" />
+        <input id="album7" name="updateButton" type="image" src="yeezus.png" value="Yeezus" onclick="updateAlbum('Yeezus')" />
         2013
       </div>
 
       <div class="album-date">
-        <input id="album8" name="updateButton" type="image" src="pablo.jpg" value="The Life of Pablo" onclick="updateGraph('The Life of Pablo')" />
+        <input id="album8" name="updateButton" type="image" src="pablo.jpg" value="The Life of Pablo" onclick="updateAlbum('The Life of Pablo')" />
         2016
       </div>
     </div>
@@ -139,16 +139,20 @@
     var height = 450;
     var buffer = 80;
 
-    var slider = d3.select("#slider");
-
-    var albumList = ["The College Dropout", "Late Registration", "Graduation", "808s & Heartbreak", "My Beautiful Dark Twisted Fantasy", "Watch the Throne", "Yeezus", "The Life of Pablo"]
-
-    slider.on("input", function() {
-      var index = this.value - 1;
-
+    function updateArtist(artist) {
+      var data;
+      var albumList;
+      if (artist == "kanye") {
+        data = "kanye-lyrics-1.csv";
+        albumList = ["The College Dropout", "Late Registration", "Graduation", "808s & Heartbreak", "My Beautiful Dark Twisted Fantasy", "Watch the Throne", "Yeezus", "The Life of Pablo"]
+      }
+      if (artist == "chance") {
+        data = "chancelyrics.csv";
+        albumList = ["10 Day", "Acid Rap", "Surf", "Free (BASED FREESTYLE MIXTAPE)", "Coloring Book"]
+      }
       d3.queue()
-      .defer(d3.csv, "kanye_west_discography.csv")
-      .defer(d3.csv, "stopwords.csv") // file
+      .defer(d3.csv, data)
+      .defer(d3.csv, "stopwords.csv") // file2
       .await(function(error, file, file2) {
         if (error) {
           console.log("ERROR: " + error)
@@ -163,7 +167,7 @@
           })
 
           albums = d3.nest()
-          .key(function (d) { return d.album; })
+          .key(function (d) { return d.Album; })
           .entries(file);
 
           albums.forEach(function(d) {
@@ -173,7 +177,7 @@
 
           albums.forEach(function(d) {
             d.values.forEach(function(i) {
-              var lower = i.lyric.toLowerCase();
+              var lower = i.Lyrics.toLowerCase();
               var split = lower.split(/[\s,?!.]+/);
               var cleanArr = [];
               split.forEach(function(t) {
@@ -184,14 +188,14 @@
 
                 }
               });
-              lyrics[i.album].push(cleanArr);
-              songs[i.album].push(i.song);
+              lyrics[i.Album].push(cleanArr);
+              songs[i.Album].push(i.Song);
             });
           });
 
           // specific album objects
           var obj = new Object;
-          for (var j = 0; j < index + 1; j++) {
+          for (var j = 0; j < albumList.length; j++) {
             for (var i = 0; i < lyrics[albumList[j]].length; i++) {
               lyrics[albumList[j]][i].forEach(function(t) {
                 if (obj[t] == null) {
@@ -212,12 +216,12 @@
             return b[1] - a[1];
           });
 
-          plotNormal("#svg", sortedObj, "#dbd7d9");
-        }; // else
-      }); // await
-    }); // slider
+          return plotNormal("#svg", sortedObj, "#dbd7d9")
+        }
+      });
+    }
 
-    function updateGraph(album) {
+    function updateAlbum(album) {
       d3.queue()
       .defer(d3.csv, "kanye-lyrics-1.csv")
       .defer(d3.csv, "stopwords.csv") // file2
