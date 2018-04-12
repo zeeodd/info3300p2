@@ -79,52 +79,21 @@
 </head>
 
 <body>
-  <h1 id="title"> Kanye West Discography: Tracking Word Frequency </h1>
+  <h1 id="title"> Lots of Words </h1>
   <div id="all-flex">
     <div id="slider-flex">
       <svg width="1000" height="450" id="svg"/>
-      <input id="slider" type="range" min="1" max="8" value="1" class="slider" orient="vertical">
     </div>
 
     <div id="album-flex">
       <div class="album-date">
-        <input id="album1" name="updateButton" type="image" src="college-dropout.jpg" value="College Dropout" onclick="updateArtist('kanye')" />
-        2004
+        <input id="album1" name="updateButton" type="image" src="kanye.jpg" value="College Dropout" onclick="updateArtist('kanye')" />
+        Kanye West
       </div>
 
       <div class="album-date">
-        <input id="album2" name="updateButton" type="image" src="late-registration.jpg" value="Late Registration" onclick="updateArtist('chance')" />
-        2005
-      </div>
-
-      <div class="album-date">
-        <input id="album3" name="updateButton" type="image" src="graduation.jpg" value="Graduation" onclick="updateAlbum('Graduation')" />
-        2007
-      </div>
-
-      <div class="album-date">
-        <input id="album4" name="updateButton" type="image" src="808s.png" value="808s & Heartbreak" onclick="updateAlbum('808s & Heartbreak')" />
-        2008
-      </div>
-
-      <div class="album-date">
-        <input id="album5" name="updateButton" type="image" src="twisted-fantasy.jpg" value="My Beautiful Dark Twisted Fantasy" onclick="updateAlbum('My Beautiful Dark Twisted Fantasy')" />
-        2010
-      </div>
-
-      <div class="album-date">
-        <input id="album6" name="updateButton" type="image" src="watch-the-throne.jpg" value="Watch the Throne" onclick="updateAlbum('Watch the Throne')" />
-        2011
-      </div>
-
-      <div class="album-date">
-        <input id="album7" name="updateButton" type="image" src="yeezus.png" value="Yeezus" onclick="updateAlbum('Yeezus')" />
-        2013
-      </div>
-
-      <div class="album-date">
-        <input id="album8" name="updateButton" type="image" src="pablo.jpg" value="The Life of Pablo" onclick="updateAlbum('The Life of Pablo')" />
-        2016
+        <input id="album2" name="updateButton" type="image" src="coldplay.jpg" value="Late Registration" onclick="updateArtist('coldplay')" />
+        Coldplay
       </div>
     </div>
 
@@ -138,17 +107,36 @@
     var width = 1000;
     var height = 450;
     var buffer = 80;
+    var coldplayOn = false;
+    var kanyeOn = false;
 
     function updateArtist(artist) {
       var data;
       var albumList;
+      var color;
       if (artist == "kanye") {
         data = "kanye-lyrics-1.csv";
-        albumList = ["The College Dropout", "Late Registration", "Graduation", "808s & Heartbreak", "My Beautiful Dark Twisted Fantasy", "Watch the Throne", "Yeezus", "The Life of Pablo"]
+        albumList = ["The College Dropout", "Late Registration", "Graduation", "808s & Heartbreak", "My Beautiful Dark Twisted Fantasy", "Watch the Throne", "Yeezus", "The Life of Pablo"];
+        color = "red";
+        if (kanyeOn == false) {
+          kanyeOn = true;
+        } else {
+          kanyeOn = false;
+        }
       }
       if (artist == "chance") {
         data = "chancelyrics.csv";
         albumList = ["10 Day", "Acid Rap", "Surf", "Free (BASED FREESTYLE MIXTAPE)", "Coloring Book"]
+      }
+      if (artist == "coldplay") {
+        data = "coldplaylyrics.csv";
+        albumList = ["The Blue Room", "Parachutes", "A Rush of Blood to the Head", "X&Y", "Viva La Vida", "Prospekt's March", "Mylo Xyloto", "Ghost Stories", "A Head Full of Dreams"];
+        color = "blue";
+        if (coldplayOn == false) {
+          coldplayOn = true;
+        } else {
+          coldplayOn = false;
+        }
       }
       d3.queue()
       .defer(d3.csv, data)
@@ -165,6 +153,8 @@
               stopwordArr.push(w["words"])
             }
           })
+
+          console.log(kanyeOn);
 
           albums = d3.nest()
           .key(function (d) { return d.Album; })
@@ -216,7 +206,9 @@
             return b[1] - a[1];
           });
 
-          return plotNormal("#svg", sortedObj, "#dbd7d9")
+          console.log(artist, sortedObj);
+
+          return plotNormal("#svg", sortedObj, color)
         }
       });
     }
@@ -300,7 +292,8 @@
 
     function plotNormal(s, arr, color) {
       var arrMax = arr[0][1]
-      var length = arr.length
+      var arrLength = arr.length
+      var length = 25
 
       var loveX, loveY;
       var godX, godY;
@@ -330,7 +323,7 @@
 
       var svg = d3.select(s);
 
-      var ratio = ((arrMax/length)+0.005).toFixed(2);
+      var ratio = ((arrMax/arrLength)+0.005).toFixed(2);
       // smoothing
 
       var x = d3.scaleLinear()
@@ -356,12 +349,12 @@
       .attr("font-family", "monospace")
       .attr("text-anchor", "middle")
       .attr("transform", "rotate(270)")
-      .text("Percent Word Frequency Over Album(s)");
+      .text("Percent Word Frequency Over Albums");
 
       // bottom axis
       svg.append("g")
       .call(d3.axisBottom(x)
-      .ticks(13))
+      .ticks(25))
       .attr("transform", "translate(0," + (height-buffer) + ")");
       svg.append("text")
       .attr("y", height - (buffer/2))
@@ -370,111 +363,51 @@
       .attr("text-anchor", "middle")
       .text("Ranking of All Words by Frequency");
 
-      svg.selectAll("circle")
-      .data(arr)
-      .enter().append("circle")
-      .attr("cx", function(d,i) { return x(i); })
-      .attr("cy", function(d) { return y(d[1]/length); })
-      .attr("r", 3)
-      .attr("fill", color);
-
-      //// LOVE /////
-      var loveText = svg.append("text")
-      .attr("x", x(loveX)+5)
-      .attr("y", y(loveY/length)-5)
-      .attr("id", "love-text")
-      .attr("fill", "#FF1493")
-      .attr("font-family", "monospace")
-      .on("mouseover", function() {
-        loveCircle.attr("r", 5).transition(200)
-        loveText.style("font-size", "20px").transition(200)
-      })
-      .on("mouseout", function() {
-        loveCircle.attr("r", 3).transition(200)
-        loveText.style("font-size", "16px").transition(200)
-      })
-      .text("LOVE");
-
-      var loveCircle = svg.append("circle")
-      .attr("cx", x(loveX))
-      .attr("cy", y(loveY/length))
-      .attr("id", "love-c")
-      .attr("r", 3)
-      .attr("fill", "#FF1493");
-
-      //// MONEY /////
-      var moneyText = svg.append("text")
-      .attr("x", x(moneyX)+5)
-      .attr("y", y(moneyY/length)-5)
-      .attr("id", "money-text")
-      .attr("fill", "green")
-      .attr("font-family", "monospace")
-      .on("mouseover", function() {
-        moneyCircle.attr("r", 5).transition(200)
-        moneyText.style("font-size", "20px").transition(200)
-      })
-      .on("mouseout", function() {
-        moneyCircle.attr("r", 3).transition(200)
-        moneyText.style("font-size", "16px").transition(200)
-      })
-      .text("MONEY");
-
-      var moneyCircle = svg.append("circle")
-      .attr("cx", x(moneyX))
-      .attr("cy", y(moneyY/length))
-      .attr("id", "money-c")
-      .attr("r", 3)
-      .attr("fill", "green");
-
-      //// GOD /////
-      var godText = svg.append("text")
-      .attr("x", x(godX)+5)
-      .attr("y", y(godY/length)-5)
-      .attr("id", "god-text")
-      .attr("fill", "#F0C31D")
-      .attr("font-family", "monospace")
-      .on("mouseover", function() {
-        godCircle.attr("r", 5).transition(200)
-        godText.style("font-size", "20px").transition(200)
-      })
-      .on("mouseout", function() {
-        godCircle.attr("r", 3).transition(200)
-        godText.style("font-size", "16px").transition(200)
-      })
-      .text("GOD");
-
-      var godCircle = svg.append("circle")
-      .attr("cx", x(godX))
-      .attr("cy", y(godY/length))
-      .attr("id", "god-c")
-      .attr("r", 3)
-      .attr("fill", "#F0C31D");
-
-      //// BLACK /////
-      if (!(blackY == null)) {
-        var blackText = svg.append("text")
-        .attr("x", x(blackX)+5)
-        .attr("y", y(blackY/length)-5)
-        .attr("id", "black-text")
-        .attr("fill", "black")
-        .attr("font-family", "monospace")
-        .on("mouseover", function() {
-          blackCircle.attr("r", 5).transition(200)
-          blackText.style("font-size", "20px").transition(200)
+      if (kanyeOn == true) {
+        svg.selectAll("circle")
+        .data(arr.slice(0, 26))
+        .enter().append("circle")
+        .attr("cx", function(d,i) { return x(i); })
+        .attr("cy", function(d) { return y(d[1]/arrLength); })
+        .attr("r", 5)
+        .on("mouseover", function(d,i) {
+          svg.append("text")
+          .attr("x", x(i))
+          .attr("y", y(d[1]/arrLength)-10)
+          .attr("font-family", "monospace")
+          .attr("id", "txt")
+          .text(arr[i][0]);
+          console.log(arr[i][0])
         })
         .on("mouseout", function() {
-          blackCircle.attr("r", 3).transition(200)
-          blackText.style("font-size", "16px").transition(200)
+          svg.select("#txt").remove()
         })
-        .text("BLACK");
-
-        var blackCircle = svg.append("circle")
-        .attr("cx", x(blackX))
-        .attr("cy", y(blackY/length))
-        .attr("id", "black-c")
-        .attr("r", 3)
-        .attr("fill", "black");
+        .attr("fill", color);
       }
+
+      //// LOVE /////
+      // var loveText = svg.append("text")
+      // .attr("x", x(loveX)+5)
+      // .attr("y", y(loveY/arrLength)-5)
+      // .attr("id", "love-text")
+      // .attr("fill", "#FF1493")
+      // .attr("font-family", "monospace")
+      // .on("mouseover", function() {
+      //   loveCircle.attr("r", 5).transition(200)
+      //   loveText.style("font-size", "20px").transition(200)
+      // })
+      // .on("mouseout", function() {
+      //   loveCircle.attr("r", 3).transition(200)
+      //   loveText.style("font-size", "16px").transition(200)
+      // })
+      // .text("LOVE");
+      //
+      // var loveCircle = svg.append("circle")
+      // .attr("cx", x(loveX))
+      // .attr("cy", y(loveY/arrLength))
+      // .attr("id", "love-c")
+      // .attr("r", 3)
+      // .attr("fill", "#FF1493");
     }
 
   </script>
