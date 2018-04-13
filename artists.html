@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Artist Concept</title>
+        <style>
+            .artist-svg { border: 1px black solid; }
+            .artist-cell { margin-top: 10px;}
+            .artist-img { width: 100%; }
+            .artist-label { text-align: center; }
+        </style>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+    </head>
+    <body>
+        <main class='container'>
+            <svg class='artist-svg col-xs-12' height="600"></svg>
+            <div class='row'>
+                <div class='col-xs-2 artist-cell'>
+                    <img class='artist-img' src='images/drake.jpg' alt='Drake Portrait'>
+                    <p class='artist-label'>Drake</p>
+                </div>
+                <div class='col-xs-2 artist-cell'>
+                    <img class='artist-img' src='images/chance.jpg' alt='Chance Portrait'>
+                    <p class='artist-label'>Chance the Rapper</p>
+                </div>
+                <div class='col-xs-2 artist-cell'>
+                    <img class='artist-img' src='images/swift.jpg' alt='Taylor Swift Portrait'>
+                    <p class='artist-label'>Taylor Swift</p>
+                </div>
+                <div class='col-xs-2 artist-cell'>
+                    <img class='artist-img' src='images/kanye.jpg' alt='Kanye West Portrait'>
+                    <p class='artist-label'>Kanye West</p>
+                </div>
+            </div>    
+        </main>
+        <script>
+            var artistData;
+            var currentSelected = ["drake"];
+            
+            var artistCells = d3.selectAll(".artist-cell");
+            console.log(artistCells);
+            artistCells.each( function(d, i) {
+                console.log("hi" + d);
+                d.on('click', function () {
+                    console.log(this);
+                })
+            });
+        </script>    
+    </body>
+</html>
