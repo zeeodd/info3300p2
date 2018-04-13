@@ -87,12 +87,12 @@
 
     <div id="album-flex">
       <div class="album-date">
-        <input id="album1" name="updateButton" type="image" src="kanye.jpg" value="College Dropout" onclick="updateArtist('kanye')" />
+        <input id="album1" name="updateButton" type="image" src="kanye.jpg" value="College Dropout" onclick="updateKanye()" />
         Kanye West
       </div>
 
       <div class="album-date">
-        <input id="album2" name="updateButton" type="image" src="coldplay.jpg" value="Late Registration" onclick="updateArtist('coldplay')" />
+        <input id="album2" name="updateButton" type="image" src="coldplay.jpg" value="Late Registration" onclick="updateColdplay()" />
         Coldplay
       </div>
     </div>
@@ -109,186 +109,197 @@
     var buffer = 80;
     var coldplayOn = false;
     var kanyeOn = false;
+    var kanyeAlbumList = ["The College Dropout", "Late Registration", "Graduation", "808s & Heartbreak", "My Beautiful Dark Twisted Fantasy", "Watch the Throne", "Yeezus", "The Life of Pablo"];
+    var coldplayAlbumList = ["The Blue Room", "Parachutes", "A Rush of Blood to the Head", "X&Y", "Viva La Vida", "Prospekt's March", "Mylo Xyloto", "Ghost Stories", "A Head Full of Dreams"];
 
-    function updateArtist(artist) {
-      var data;
-      var albumList;
-      var color;
-      if (artist == "kanye") {
-        data = "kanye-lyrics-1.csv";
-        albumList = ["The College Dropout", "Late Registration", "Graduation", "808s & Heartbreak", "My Beautiful Dark Twisted Fantasy", "Watch the Throne", "Yeezus", "The Life of Pablo"];
-        color = "red";
-        if (kanyeOn == false) {
-          kanyeOn = true;
-        } else {
-          kanyeOn = false;
-        }
-      }
-      if (artist == "chance") {
-        data = "chancelyrics.csv";
-        albumList = ["10 Day", "Acid Rap", "Surf", "Free (BASED FREESTYLE MIXTAPE)", "Coloring Book"]
-      }
-      if (artist == "coldplay") {
-        data = "coldplaylyrics.csv";
-        albumList = ["The Blue Room", "Parachutes", "A Rush of Blood to the Head", "X&Y", "Viva La Vida", "Prospekt's March", "Mylo Xyloto", "Ghost Stories", "A Head Full of Dreams"];
-        color = "blue";
-        if (coldplayOn == false) {
-          coldplayOn = true;
-        } else {
-          coldplayOn = false;
-        }
-      }
-      d3.queue()
-      .defer(d3.csv, data)
-      .defer(d3.csv, "stopwords.csv") // file2
-      .await(function(error, file, file2) {
-        if (error) {
-          console.log("ERROR: " + error)
-        } else {
+    d3.queue()
+    .defer(d3.csv, "kanye-lyrics-1.csv") // file
+    .defer(d3.csv, "coldplaylyrics.csv") // file2
+    .defer(d3.csv, "stopwords.csv") // file3
+    .await(function(error, file, file2, file3) {
+      if (error) {
+        console.log("ERROR: " + error)
+      } else {
 
-          var stopwordArr = [];
+        var stopwordArr = [];
+        var kanyeAlbums;
+        var coldplayAlbums;
 
-          file2.forEach(function(w) {
-            if (!(w["words"] == "")) {
-              stopwordArr.push(w["words"])
-            }
-          })
-
-          console.log(kanyeOn);
-
-          albums = d3.nest()
-          .key(function (d) { return d.Album; })
-          .entries(file);
-
-          albums.forEach(function(d) {
-            lyrics[d.key] = []
-            songs[d.key] = []
-          });
-
-          albums.forEach(function(d) {
-            d.values.forEach(function(i) {
-              var lower = i.Lyrics.toLowerCase();
-              var split = lower.split(/[\s,?!.]+/);
-              var cleanArr = [];
-              split.forEach(function(t) {
-                if(reg.test(t)) {
-                  if (!(stopwordArr.indexOf(t) > -1)) {
-                    cleanArr.push(t)
-                  }
-
-                }
-              });
-              lyrics[i.Album].push(cleanArr);
-              songs[i.Album].push(i.Song);
-            });
-          });
-
-          // specific album objects
-          var obj = new Object;
-          for (var j = 0; j < albumList.length; j++) {
-            for (var i = 0; i < lyrics[albumList[j]].length; i++) {
-              lyrics[albumList[j]][i].forEach(function(t) {
-                if (obj[t] == null) {
-                  obj[t] = 1
-                } else {
-                  obj[t] += 1
-                }
-              })
-            }
+        file3.forEach(function(w) {
+          if (!(w["words"] == "")) {
+            stopwordArr.push(w["words"])
           }
+        }) // end of the forEach
 
-          var sortable = [];
-          for (var w in obj) {
-            sortable.push([w, obj[w]]);
-          }
+        kanyeAlbums = d3.nest()
+        .key(function (d) { return d.Album; })
+        .entries(file);
 
-          var sortedObj = sortable.sort(function(a, b) {
-            return b[1] - a[1];
-          });
+        coldplayAlbums = d3.nest()
+        .key(function (d) { return d.Album; })
+        .entries(file2);
 
-          console.log(artist, sortedObj);
+        kanyeAlbums.forEach(function(d) {
+          lyrics[d.key] = []
+          songs[d.key] = []
+        });
 
-          return plotNormal("#svg", sortedObj, color)
-        }
-      });
-    }
+        coldplayAlbums.forEach(function(d) {
+          lyrics[d.key] = []
+          songs[d.key] = []
+        });
 
-    function updateAlbum(album) {
-      d3.queue()
-      .defer(d3.csv, "kanye-lyrics-1.csv")
-      .defer(d3.csv, "stopwords.csv") // file2
-      .await(function(error, file, file2) {
-        if (error) {
-          console.log("ERROR: " + error)
-        } else {
-
-          var stopwordArr = [];
-
-          file2.forEach(function(w) {
-            if (!(w["words"] == "")) {
-              stopwordArr.push(w["words"])
-            }
-          })
-
-          albums = d3.nest()
-          .key(function (d) { return d.Album; })
-          .entries(file);
-
-          albums.forEach(function(d) {
-            lyrics[d.key] = []
-            songs[d.key] = []
-          });
-
-          albums.forEach(function(d) {
-            d.values.forEach(function(i) {
-              var lower = i.Lyrics.toLowerCase();
-              var split = lower.split(/[\s,?!.]+/);
-              var cleanArr = [];
-              split.forEach(function(t) {
-                if(reg.test(t)) {
-                  if (!(stopwordArr.indexOf(t) > -1)) {
-                    cleanArr.push(t)
-                  }
-
+        kanyeAlbums.forEach(function(d) {
+          d.values.forEach(function(i) {
+            var lower = i.Lyrics.toLowerCase();
+            var split = lower.split(/[\s,?!.]+/);
+            var cleanArr = [];
+            split.forEach(function(t) {
+              if(reg.test(t)) {
+                if (!(stopwordArr.indexOf(t) > -1)) {
+                  cleanArr.push(t)
                 }
-              });
-              lyrics[i.Album].push(cleanArr);
-              songs[i.Album].push(i.Song);
+
+              }
             });
+            lyrics[i.Album].push(cleanArr);
+            songs[i.Album].push(i.Song);
           });
+        });
 
-          // specific album objects
-          var obj = new Object;
+        coldplayAlbums.forEach(function(d) {
+          d.values.forEach(function(i) {
+            var lower = i.Lyrics.toLowerCase();
+            var split = lower.split(/[\s,?!.]+/);
+            var cleanArr = [];
+            split.forEach(function(t) {
+              if(reg.test(t)) {
+                if (!(stopwordArr.indexOf(t) > -1)) {
+                  cleanArr.push(t)
+                }
 
-          console.log(album);
+              }
+            });
+            lyrics[i.Album].push(cleanArr);
+            songs[i.Album].push(i.Song);
+          });
+        });
 
-          var count = 0
-          for (var i = 0; i < lyrics[album].length; i++) {
-            lyrics[album][i].forEach(function(t) {
-              if (obj[t] == null) {
-                obj[t] = 1
-                count++
+        // Kanye Obj creation
+        var kanyeObj = new Object;
+        for (var j = 0; j < kanyeAlbumList.length; j++) {
+          for (var i = 0; i < lyrics[kanyeAlbumList[j]].length; i++) {
+            lyrics[kanyeAlbumList[j]][i].forEach(function(t) {
+              if (kanyeObj[t] == null) {
+                kanyeObj[t] = 1
               } else {
-                obj[t] += 1
-                count++
+                kanyeObj[t] += 1
               }
             })
           }
-
-          var sortable = [];
-          for (var w in obj) {
-            sortable.push([w, obj[w]]);
-          }
-
-          var sortedObj = sortable.sort(function(a, b) {
-            return b[1] - a[1];
-          });
-
-          return plotNormal("#svg", sortedObj, "#dbd7d9")
         }
-      });
+
+        var kanyeSortable = [];
+        for (var w in kanyeObj) {
+          kanyeSortable.push([w, kanyeObj[w]]);
+        }
+
+        var kanyeSortedObj = kanyeSortable.sort(function(a, b) {
+          return b[1] - a[1];
+        });
+
+        // Coldplay Obj creation
+        var coldplayObj = new Object;
+        for (var j = 0; j < coldplayAlbumList.length; j++) {
+          for (var i = 0; i < lyrics[coldplayAlbumList[j]].length; i++) {
+            lyrics[coldplayAlbumList[j]][i].forEach(function(t) {
+              if (coldplayObj[t] == null) {
+                coldplayObj[t] = 1
+              } else {
+                coldplayObj[t] += 1
+              }
+            })
+          }
+        }
+
+        var coldplaySortable = [];
+        for (var w in coldplayObj) {
+          coldplaySortable.push([w, coldplayObj[w]]);
+        }
+
+        var coldplaySortedObj = coldplaySortable.sort(function(a, b) {
+          return b[1] - a[1];
+        });
+
+        console.log("coldplay", coldplaySortedObj);
+        console.log("kanye", kanyeSortedObj);
+        console.log(kanyeOn)
+
+        var kanyeMax = kanyeSortedObj[0][1];
+        var coldplayMax = coldplaySortedObj[0][1];
+
+        var kanyeLength = kanyeSortedObj.length;
+        var coldplayLength = coldplaySortedObj.length;
+        var length = 25;
+
+        var svg = d3.select("#svg");
+
+        var kanyeRatio = ((kanyeMax/kanyeLength)+0.005).toFixed(2);
+        var coldplayRatio = ((coldplayMax/coldplayLength)+0.005).toFixed(2);
+
+        var xKanye = d3.scaleLinear()
+        .domain([0, kanyeLength])
+        .range([buffer, width-buffer]);
+        var yKanye = d3.scaleLinear()
+        .domain([0, kanyeRatio])
+        .range([height-buffer, buffer]);
+
+        var xColdplay = d3.scaleLinear()
+        .domain([0, coldplayLength])
+        .range([buffer, width-buffer]);
+        var yColdplay = d3.scaleLinear()
+        .domain([0, coldplayRatio])
+        .range([height-buffer, buffer]);
+
+        svg.selectAll("circle")
+        .data(kanyeSortedObj.slice(0, 26))
+        .enter().append("circle")
+        .attr("cx", function(d,i) { return xKanye(i); })
+        .attr("cy", function(d) { return yKanye(d[1]/kanyeLength); })
+        .attr("r", 5)
+        .on("mouseover", function(d,i) {
+          svg.append("text")
+          .attr("x", xKanye(i))
+          .attr("y", yKanye(d[1]/kanyeLength)-10)
+          .attr("font-family", "monospace")
+          .attr("id", "txt")
+          .text(kanyeSortedObj[i][0]);
+        })
+        .on("mouseout", function() {
+          svg.select("#txt").remove()
+        })
+        .attr("fill", "red");
+
+      } // end of else
+    }); // end of await
+
+    /////////////// FUNCTIONS ///////////////
+
+    function updateKanye(arr) {
+      if (kanyeOn == false) {
+        kanyeOn = true;
+      } else {
+        kanyeOn = false;
+      }
     }
 
+    function updateColdplay() {
+      if (coldplayOn == false) {
+        coldplayOn = true;
+      } else {
+        coldplayOn = false;
+      }
+    }
 
     function plotNormal(s, arr, color) {
       var arrMax = arr[0][1]
@@ -363,27 +374,24 @@
       .attr("text-anchor", "middle")
       .text("Ranking of All Words by Frequency");
 
-      if (kanyeOn == true) {
-        svg.selectAll("circle")
-        .data(arr.slice(0, 26))
-        .enter().append("circle")
-        .attr("cx", function(d,i) { return x(i); })
-        .attr("cy", function(d) { return y(d[1]/arrLength); })
-        .attr("r", 5)
-        .on("mouseover", function(d,i) {
-          svg.append("text")
-          .attr("x", x(i))
-          .attr("y", y(d[1]/arrLength)-10)
-          .attr("font-family", "monospace")
-          .attr("id", "txt")
-          .text(arr[i][0]);
-          console.log(arr[i][0])
-        })
-        .on("mouseout", function() {
-          svg.select("#txt").remove()
-        })
-        .attr("fill", color);
-      }
+      svg.selectAll("circle")
+      .data(arr.slice(0, 26))
+      .enter().append("circle")
+      .attr("cx", function(d,i) { return x(i); })
+      .attr("cy", function(d) { return y(d[1]/arrLength); })
+      .attr("r", 5)
+      .on("mouseover", function(d,i) {
+        svg.append("text")
+        .attr("x", x(i))
+        .attr("y", y(d[1]/arrLength)-10)
+        .attr("font-family", "monospace")
+        .attr("id", "txt")
+        .text(arr[i][0]);
+      })
+      .on("mouseout", function() {
+        svg.select("#txt").remove()
+      })
+      .attr("fill", color);
 
       //// LOVE /////
       // var loveText = svg.append("text")
@@ -408,7 +416,8 @@
       // .attr("id", "love-c")
       // .attr("r", 3)
       // .attr("fill", "#FF1493");
-    }
+
+    } // end of plotNormal
 
   </script>
 </body>
