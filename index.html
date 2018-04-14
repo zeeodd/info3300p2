@@ -6,96 +6,45 @@
 <head>
     <title>Project 2</title>
     <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Slabo+27px" rel="stylesheet">
     <style>
-      body { text-align: center; }
+      body { text-align: center; font-family: "Slabo 27px"}
 
-      svg { border: solid black 2px; margin-left: auto; margin-right: auto; display: block; order: 1; background-color: white; }
+      svg { margin-left: auto; margin-right: auto; display: block; order: 1; background-color: white; }
 
-      #title { font-family: monospace; font-size: 27px; }
+      #title { font-size: 60px; margin: 20px; padding: 0px; }
 
-      #album-flex { display: flex; flex-direction: row; order: 2; margin-top: 10px; }
-
-      .album-date { display: flex; flex-direction: column; align-items: center; font-family: monospace;}
+      #intro { width: 650px; text-align: justify; }
 
       #all-flex { display: flex; flex-direction: column; justify-content: space-between; width: 100%; align-items: center; }
 
       #slider-flex { display: flex; flex-direction: row; margin: 0px;}
 
-      #slider { order: 2; margin-left: 0px; align-self: center; margin-left: 20px; transform: rotate(180deg); height: 400px }
-
-      #album1 { width: 100px; border: solid black 2px; transition: 0.3s; margin: 5px; }
-      #album1:hover { width: 110px; transition: 0.3s; }
-      #album1:active { transform: scale(1.15, 1.15); }
-
-      #album2 { width: 100px; border: solid black 2px; transition: 0.3s; margin: 5px; }
-      #album2:hover { width: 110px; transition: 0.3s; }
-      #album2:active { transform: scale(1.15, 1.15); }
-
-      #album3 { width: 100px; border: solid black 2px; transition: 0.3s; margin: 5px; }
-      #album3:hover { width: 110px; transition: 0.3s; }
-      #album3:active { transform: scale(1.15, 1.15); }
-
-      #album4 { width: 100px; border: solid black 2px; transition: 0.3s; margin: 5px; }
-      #album4:hover { width: 110px; transition: 0.3s; }
-      #album4:active { transform: scale(1.15, 1.15); }
-
-      #album5 { width: 100px; border: solid black 2px; transition: 0.3s; margin: 5px; }
-      #album5:hover { width: 110px; transition: 0.3s; }
-      #album5:active { transform: scale(1.15, 1.15); }
-
-      #album6 { width: 100px; border: solid black 2px; transition: 0.3s; margin: 5px; }
-      #album6:hover { width: 110px; transition: 0.3s; }
-      #album6:active { transform: scale(1.15, 1.15); }
-
-      #album7 { width: 100px; border: solid black 2px; transition: 0.3s; margin: 5px; }
-      #album7:hover { width: 110px; transition: 0.3s; }
-      #album7:active { transform: scale(1.15, 1.15); }
-
-      #album8 { width: 100px; border: solid black 2px; transition: 0.3s; margin: 5px; }
-      #album8:hover { width: 110px; transition: 0.3s; }
-      #album8:active { transform: scale(1.15, 1.15); }
-
-      #love-text { transition: 0.3s; }
-      #love-text:hover { transition: 0.3s; }
-      #love-c { transition: 0.3s; }
-      #love-c:hover { transition: 0.3s; }
-
-      #god-text { transition: 0.3s; }
-      #god-text:hover { transition: 0.3s; }
-      #god-c { transition: 0.3s; }
-      #god-c:hover { transition: 0.3s; }
-
-      #black-text { transition: 0.3s; }
-      #black-text:hover { transition: 0.3s; }
-      #black-c { transition: 0.3s; }
-      #black-c:hover { transition: 0.3s; }
-
-      #money-text { transition: 0.3s; }
-      #money-text:hover { transition: 0.3s; }
-      #money-c { transition: 0.3s; }
-      #money-c:hover { transition: 0.3s; }
     </style>
     <script src="https://d3js.org/d3.v4.min.js"></script>
 </head>
 
 <body>
-  <h1 id="title"> Lots of Words </h1>
+  <h1 id="title" onclick="updateColdplay()"> The <span style= "color: #ff0055">Love</span> of Music </h1>
   <div id="all-flex">
+    <div id="intro">
+      It's difficult to ascertain the influences behind artists when they write a song, let alone craft an entire album. Hoping to find a deeper understanding of their emotional inspiration, we looked at two artists from two, separate genres and compared their use of the word <span style= "color: #ff0055">love</span> across their discography. We chose to analyze <span style= "color: #b8336a; font-weight: bold;">Kanye West</span> from the hip-hop realm and <span style= "color: #73c2fb; font-weight: bold;">Coldplay</span> from the rock/pop genre.
+    </div>
     <div id="slider-flex">
-      <svg width="1000" height="450" id="svg"/>
+      <svg width="1000" height="1500" id="svg"/>
     </div>
 
-    <div id="album-flex">
+    <!-- <div id="album-flex">
       <div class="album-date">
-        <input id="album1" name="updateButton" type="image" src="kanye.jpg" value="College Dropout" onclick="updateArtist('kanye')" />
+        <input id="album1" name="updateButton" type="image" src="kanye.jpg" value="College Dropout" onclick="updateKanye()" />
         Kanye West
       </div>
 
       <div class="album-date">
-        <input id="album2" name="updateButton" type="image" src="coldplay.jpg" value="Late Registration" onclick="updateArtist('coldplay')" />
+        <input id="album2" name="updateButton" type="image" src="coldplay.jpg" value="Late Registration" />
         Coldplay
       </div>
-    </div>
+    </div> -->
 
   </div>
 
@@ -105,308 +54,324 @@
     var songs = new Object;
     var reg = /^[a-z]+$/i;
     var width = 1000;
-    var height = 450;
+    var height = 1500;
     var buffer = 80;
     var coldplayOn = false;
     var kanyeOn = false;
+    var kanyeAlbumList = ["The College Dropout", "Late Registration", "Graduation", "808s & Heartbreak", "My Beautiful Dark Twisted Fantasy", "Watch the Throne", "Yeezus", "The Life of Pablo"];
+    var kanyeAlbumYears = [2004, 2005, 2007, 2008, 2010, 2011, 2013, 2016]
+    var coldplayAlbumList = ["Parachutes", "A Rush of Blood to the Head", "X&Y", "Viva La Vida", "Prospekt's March", "Mylo Xyloto", "Ghost Stories", "A Head Full of Dreams"];
+    var coldplayAlbumYears = [2000, 2002, 2005, 2008, 2008, 2011, 2014, 2015]
 
-    function updateArtist(artist) {
-      var data;
-      var albumList;
-      var color;
-      if (artist == "kanye") {
-        data = "kanye-lyrics-1.csv";
-        albumList = ["The College Dropout", "Late Registration", "Graduation", "808s & Heartbreak", "My Beautiful Dark Twisted Fantasy", "Watch the Throne", "Yeezus", "The Life of Pablo"];
-        color = "red";
-        if (kanyeOn == false) {
-          kanyeOn = true;
-        } else {
-          kanyeOn = false;
-        }
-      }
-      if (artist == "chance") {
-        data = "chancelyrics.csv";
-        albumList = ["10 Day", "Acid Rap", "Surf", "Free (BASED FREESTYLE MIXTAPE)", "Coloring Book"]
-      }
-      if (artist == "coldplay") {
-        data = "coldplaylyrics.csv";
-        albumList = ["The Blue Room", "Parachutes", "A Rush of Blood to the Head", "X&Y", "Viva La Vida", "Prospekt's March", "Mylo Xyloto", "Ghost Stories", "A Head Full of Dreams"];
-        color = "blue";
-        if (coldplayOn == false) {
-          coldplayOn = true;
-        } else {
-          coldplayOn = false;
-        }
-      }
-      d3.queue()
-      .defer(d3.csv, data)
-      .defer(d3.csv, "stopwords.csv") // file2
-      .await(function(error, file, file2) {
-        if (error) {
-          console.log("ERROR: " + error)
-        } else {
 
-          var stopwordArr = [];
+        d3.queue()
+        .defer(d3.csv, "coldplaylyrics.csv")
+        .defer(d3.csv, "stopwords.csv") // file2
+        .await(function(error, file, file2) {
+          if (error) {
+            console.log("ERROR: " + error)
+          } else {
 
-          file2.forEach(function(w) {
-            if (!(w["words"] == "")) {
-              stopwordArr.push(w["words"])
-            }
-          })
+            var stopwordArr = [];
 
-          console.log(kanyeOn);
-
-          albums = d3.nest()
-          .key(function (d) { return d.Album; })
-          .entries(file);
-
-          albums.forEach(function(d) {
-            lyrics[d.key] = []
-            songs[d.key] = []
-          });
-
-          albums.forEach(function(d) {
-            d.values.forEach(function(i) {
-              var lower = i.Lyrics.toLowerCase();
-              var split = lower.split(/[\s,?!.]+/);
-              var cleanArr = [];
-              split.forEach(function(t) {
-                if(reg.test(t)) {
-                  if (!(stopwordArr.indexOf(t) > -1)) {
-                    cleanArr.push(t)
-                  }
-
-                }
-              });
-              lyrics[i.Album].push(cleanArr);
-              songs[i.Album].push(i.Song);
-            });
-          });
-
-          // specific album objects
-          var obj = new Object;
-          for (var j = 0; j < albumList.length; j++) {
-            for (var i = 0; i < lyrics[albumList[j]].length; i++) {
-              lyrics[albumList[j]][i].forEach(function(t) {
-                if (obj[t] == null) {
-                  obj[t] = 1
-                } else {
-                  obj[t] += 1
-                }
-              })
-            }
-          }
-
-          var sortable = [];
-          for (var w in obj) {
-            sortable.push([w, obj[w]]);
-          }
-
-          var sortedObj = sortable.sort(function(a, b) {
-            return b[1] - a[1];
-          });
-
-          console.log(artist, sortedObj);
-
-          return plotNormal("#svg", sortedObj, color)
-        }
-      });
-    }
-
-    function updateAlbum(album) {
-      d3.queue()
-      .defer(d3.csv, "kanye-lyrics-1.csv")
-      .defer(d3.csv, "stopwords.csv") // file2
-      .await(function(error, file, file2) {
-        if (error) {
-          console.log("ERROR: " + error)
-        } else {
-
-          var stopwordArr = [];
-
-          file2.forEach(function(w) {
-            if (!(w["words"] == "")) {
-              stopwordArr.push(w["words"])
-            }
-          })
-
-          albums = d3.nest()
-          .key(function (d) { return d.Album; })
-          .entries(file);
-
-          albums.forEach(function(d) {
-            lyrics[d.key] = []
-            songs[d.key] = []
-          });
-
-          albums.forEach(function(d) {
-            d.values.forEach(function(i) {
-              var lower = i.Lyrics.toLowerCase();
-              var split = lower.split(/[\s,?!.]+/);
-              var cleanArr = [];
-              split.forEach(function(t) {
-                if(reg.test(t)) {
-                  if (!(stopwordArr.indexOf(t) > -1)) {
-                    cleanArr.push(t)
-                  }
-
-                }
-              });
-              lyrics[i.Album].push(cleanArr);
-              songs[i.Album].push(i.Song);
-            });
-          });
-
-          // specific album objects
-          var obj = new Object;
-
-          console.log(album);
-
-          var count = 0
-          for (var i = 0; i < lyrics[album].length; i++) {
-            lyrics[album][i].forEach(function(t) {
-              if (obj[t] == null) {
-                obj[t] = 1
-                count++
-              } else {
-                obj[t] += 1
-                count++
+            file2.forEach(function(w) {
+              if (!(w["words"] == "")) {
+                stopwordArr.push(w["words"])
               }
             })
+
+            albums = d3.nest()
+            .key(function (d) { return d.Album; })
+            .entries(file);
+
+            albums.forEach(function(d) {
+              lyrics[d.key] = []
+              songs[d.key] = []
+            });
+
+            albums.forEach(function(d) {
+              d.values.forEach(function(i) {
+                var lower = i.Lyrics.toLowerCase();
+                var split = lower.split(/[\s,?!.]+/);
+                var cleanArr = [];
+                split.forEach(function(t) {
+                  if(reg.test(t)) {
+                    if (!(stopwordArr.indexOf(t) > -1)) {
+                      cleanArr.push(t)
+                    }
+
+                  }
+                });
+                lyrics[i.Album].push(cleanArr);
+                songs[i.Album].push(i.Song);
+              });
+            });
+
+            // specific album objects
+            var list = []
+
+            for (var j = 0; j < coldplayAlbumList.length; j++) {
+              var count = 0
+              var obj = new Object;
+              for (var i = 0; i < lyrics[coldplayAlbumList[j]].length; i++) {
+                lyrics[coldplayAlbumList[j]][i].forEach(function(t) {
+                  if (obj[t] == null) {
+                    obj[t] = 1
+                    count++
+                  } else {
+                    obj[t] += 1
+                    count++
+                  }
+                })
+              } // end of i
+              list.push(obj)
+            } // end of j
+
+            console.log(list)
+
+            sortableList = [];
+            for (var alb in list) {
+              var l = [];
+              for (var w in list[alb]) {
+                l.push([w, list[alb][w]]);
+              }
+              var sorted = l.sort(function(a, b) {
+                return b[1] - a[1];
+              });
+              sortableList.push(sorted)
+            }
+
+            console.log("MYLO KYLOT", sortableList[5])
+
+            var coldplayLoveList = []
+
+            for (var i in sortableList) {
+              if (i == 5) {
+                coldplayLoveList.push([coldplayAlbumList[i], 0])
+              }
+              for (var w in sortableList[i]) {
+                if (sortableList[i][w][0] == "love") {
+                  coldplayLoveList.push([coldplayAlbumList[i], Number((sortableList[i][w][1]/sortableList[i].length).toFixed(4))])
+                }
+              }
+            }
+
+            console.log(coldplayLoveList)
+
+            var svg = d3.select("#svg");
+
+            var timelineScale = d3.scaleLinear()
+            .domain([1999, 2017])
+            .range([10, height-3]);
+
+            var timeline = []
+            for (var i = 0; i < 18; i++) {
+              timeline.push(1999+i)
+            }
+
+            svg.selectAll("line")
+            .data(timeline)
+            .enter().append("line")
+            .attr("x1", width/2)
+            .attr("x2", width/2)
+            .attr("y1", function(d) {
+              return timelineScale(d) + 10
+            })
+            .attr("y2", function(d) {
+              return timelineScale(d) + (height/19) - 15
+            })
+            .attr("stroke", "black")
+            .attr("stroke-width", 5);
+
+            var t = svg.selectAll("text")
+            .data(timeline)
+            .enter().append("text")
+            .attr("id",function(d,i) {return "time"+i;} )
+            .attr("x", width/2)
+            .attr("y", function(d) { return timelineScale(d); })
+            .attr("text-anchor", "middle")
+            .text(function(d) {
+              if (Number(d) > 1999) {
+                return String(d);
+              }
+            })
+            .on("mouseover", function(d,i) {
+              d3.select('#time'+i)
+              .attr("font-size", 20)
+              .style("cursor", "default");
+            })
+            .on("mouseout", function(d) {
+              t.attr("font-size", 16)
+            });
+
+            // READING IN THE KANYE DATA
+            d3.queue()
+            .defer(d3.csv, "kanye-lyrics-1.csv")
+            .defer(d3.csv, "stopwords.csv") // file2
+            .await(function(error, file, file2) {
+              if (error) {
+                console.log("ERROR: " + error)
+              } else {
+
+                var stopwordArr = [];
+
+                file2.forEach(function(w) {
+                  if (!(w["words"] == "")) {
+                    stopwordArr.push(w["words"])
+                  }
+                })
+
+                albums = d3.nest()
+                .key(function (d) { return d.Album; })
+                .entries(file);
+
+                albums.forEach(function(d) {
+                  lyrics[d.key] = []
+                  songs[d.key] = []
+                });
+
+                albums.forEach(function(d) {
+                  d.values.forEach(function(i) {
+                    var lower = i.Lyrics.toLowerCase();
+                    var split = lower.split(/[\s,?!.]+/);
+                    var cleanArr = [];
+                    split.forEach(function(t) {
+                      if(reg.test(t)) {
+                        if (!(stopwordArr.indexOf(t) > -1)) {
+                          cleanArr.push(t)
+                        }
+
+                      }
+                    });
+                    lyrics[i.Album].push(cleanArr);
+                    songs[i.Album].push(i.Song);
+                  });
+                });
+
+                // specific album objects
+                var list = []
+
+                for (var j = 0; j < kanyeAlbumList.length; j++) {
+                  var count = 0
+                  var obj = new Object;
+                  for (var i = 0; i < lyrics[kanyeAlbumList[j]].length; i++) {
+                    lyrics[kanyeAlbumList[j]][i].forEach(function(t) {
+                      if (obj[t] == null) {
+                        obj[t] = 1
+                        count++
+                      } else {
+                        obj[t] += 1
+                        count++
+                      }
+                    })
+                  } // end of i
+                  list.push(obj)
+                } // end of j
+
+                sortableList = [];
+                for (var alb in list) {
+                  var l = [];
+                  for (var w in list[alb]) {
+                    l.push([w, list[alb][w]]);
+                  }
+                  var sorted = l.sort(function(a, b) {
+                    return b[1] - a[1];
+                  });
+                  sortableList.push(sorted)
+                }
+
+                var kanyeLoveList = []
+
+                for (var i in sortableList) {
+                  for (var w in sortableList[i]) {
+                    if (sortableList[i][w][0] == "love") {
+                      kanyeLoveList.push([kanyeAlbumList[i], Number((sortableList[i][w][1]/sortableList[i].length).toFixed(4))])
+                    }
+                  }
+                }
+
+                console.log(kanyeLoveList)
+
+                var timelineObjColdplay = []
+                var timelineObjKanye = []
+
+                for (var j = 0; j < coldplayAlbumYears.length; j++) {
+                  var obj =  ["coldplay", coldplayAlbumYears[j], coldplayLoveList[j][1], "#73c2fb"]
+                  timelineObjColdplay.push(obj)
+                }
+                for (var j = 0; j < kanyeAlbumYears.length; j++) {
+                  var obj =  ["kanye", kanyeAlbumYears[j], kanyeLoveList[j][1], "#b8336a"]
+                  timelineObjKanye.push(obj)
+                }
+
+                console.log("COLDPLAY", timelineObjColdplay)
+                console.log("KANYE", timelineObjKanye)
+
+                var timelineObj = timelineObjColdplay.concat(timelineObjKanye);
+
+                var barScale = d3.scaleLinear()
+                .domain([0, 0.0866])
+                .range([0, 200]);
+
+                svg.selectAll("rect")
+                .data(timelineObj)
+                .enter().append("rect")
+                .attr("x", function(d) {
+                  if (d[0] == "coldplay") {
+                    return width/2 + 30;
+                  } else {
+                    return width/2 - 30 - barScale(d[2]);
+                  }
+                })
+                .attr("y", function(d) { return timelineScale(d[1]) - 30; })
+                .attr("height", 50)
+                .attr("width", function(d) { return barScale(d[2]); })
+                .attr("fill", function(d) { return d[3]; })
+                .on("mouseover", function(d) {
+                  if (d[0] == "coldplay") {
+                    svg.append("rect")
+                    .attr("x", width/2 + 30)
+                    .attr("y", timelineScale(d[1]) - 30)
+                    .attr("height", 50)
+                    .attr("width", barScale(d[2]))
+                    .attr("fill", "none")
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 3)
+                    .attr("id", "highlight")
+                    svg.append("text")
+                    .attr("x", width/2 + 35 + barScale(d[2]))
+                    .attr("y", timelineScale(d[1]))
+                    .attr("id", "txt")
+                    .attr("fill", d[3])
+                    .text(String((d[2]*100).toFixed(2))+"%");
+                  } else {
+                    svg.append("rect")
+                    .attr("x", width/2 - 30 - barScale(d[2]))
+                    .attr("y", timelineScale(d[1]) - 30)
+                    .attr("height", 50)
+                    .attr("width", barScale(d[2]))
+                    .attr("fill", "none")
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 3)
+                    .attr("id", "highlight")
+                    svg.append("text")
+                    .attr("x", width/2 - 80 - barScale(d[2]))
+                    .attr("y", timelineScale(d[1]))
+                    .attr("id", "txt")
+                    .attr("fill", d[3])
+                    .text(String((d[2]*100).toFixed(2))+"%");
+                  }
+                })
+                .on("mouseout", function() {
+                  svg.select("#txt").remove()
+                  svg.select("#highlight").remove()
+                })
+
+              }
+            });
+
           }
-
-          var sortable = [];
-          for (var w in obj) {
-            sortable.push([w, obj[w]]);
-          }
-
-          var sortedObj = sortable.sort(function(a, b) {
-            return b[1] - a[1];
-          });
-
-          return plotNormal("#svg", sortedObj, "#dbd7d9")
-        }
-      });
-    }
-
-
-    function plotNormal(s, arr, color) {
-      var arrMax = arr[0][1]
-      var arrLength = arr.length
-      var length = 25
-
-      var loveX, loveY;
-      var godX, godY;
-      var blackX, blackY;
-      var moneyX, moneyY;
-
-      var count = 0;
-      arr.forEach(function(d) {
-        if (d[0] == "love") {
-          loveX = count;
-          loveY = d[1];
-        }
-        if (d[0] == "god") {
-          godX = count;
-          godY = d[1];
-        }
-        if (d[0] == "black") {
-          blackX = count;
-          blackY = d[1];
-        }
-        if (d[0] == "money") {
-          moneyX = count;
-          moneyY = d[1];
-        }
-        count++
-      });
-
-      var svg = d3.select(s);
-
-      var ratio = ((arrMax/arrLength)+0.005).toFixed(2);
-      // smoothing
-
-      var x = d3.scaleLinear()
-      .domain([0, length])
-      .range([buffer, width-buffer]);
-
-      var y = d3.scaleLinear()
-      .domain([0, ratio])
-      .range([height-buffer, buffer]);
-
-      svg.selectAll("circle").remove();
-      svg.selectAll("text").remove();
-      svg.selectAll("g").remove();
-
-      // left axis
-      svg.append("g")
-      .call(d3.axisLeft(y)
-      .ticks(6))
-      .attr("transform", "translate(" + buffer + ",0)");
-      svg.append("text")
-      .attr("y", buffer/2)
-      .attr("x", -height/2)
-      .attr("font-family", "monospace")
-      .attr("text-anchor", "middle")
-      .attr("transform", "rotate(270)")
-      .text("Percent Word Frequency Over Albums");
-
-      // bottom axis
-      svg.append("g")
-      .call(d3.axisBottom(x)
-      .ticks(25))
-      .attr("transform", "translate(0," + (height-buffer) + ")");
-      svg.append("text")
-      .attr("y", height - (buffer/2))
-      .attr("x", width/2)
-      .attr("font-family", "monospace")
-      .attr("text-anchor", "middle")
-      .text("Ranking of All Words by Frequency");
-
-      svg.selectAll("circle")
-      .data(arr.slice(0, 26))
-      .enter().append("circle")
-      .attr("cx", function(d,i) { return x(i); })
-      .attr("cy", function(d) { return y(d[1]/arrLength); })
-      .attr("r", 5)
-      .on("mouseover", function(d,i) {
-        svg.append("text")
-        .attr("x", x(i))
-        .attr("y", y(d[1]/arrLength)-10)
-        .attr("font-family", "monospace")
-        .attr("id", "txt")
-        .text(arr[i][0]);
-        console.log(arr[i][0])
-      })
-      .on("mouseout", function() {
-        svg.select("#txt").remove()
-      })
-      .attr("fill", color);
-
-      //// LOVE /////
-      // var loveText = svg.append("text")
-      // .attr("x", x(loveX)+5)
-      // .attr("y", y(loveY/arrLength)-5)
-      // .attr("id", "love-text")
-      // .attr("fill", "#FF1493")
-      // .attr("font-family", "monospace")
-      // .on("mouseover", function() {
-      //   loveCircle.attr("r", 5).transition(200)
-      //   loveText.style("font-size", "20px").transition(200)
-      // })
-      // .on("mouseout", function() {
-      //   loveCircle.attr("r", 3).transition(200)
-      //   loveText.style("font-size", "16px").transition(200)
-      // })
-      // .text("LOVE");
-      //
-      // var loveCircle = svg.append("circle")
-      // .attr("cx", x(loveX))
-      // .attr("cy", y(loveY/arrLength))
-      // .attr("id", "love-c")
-      // .attr("r", 3)
-      // .attr("fill", "#FF1493");
-    }
+        }); //  end of await
 
   </script>
 </body>
