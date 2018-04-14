@@ -20,6 +20,8 @@
 
       #slider-flex { display: flex; flex-direction: row; margin: 0px;}
 
+      .image-border { stroke: black; fill: transparent; }
+
     </style>
     <script src="https://d3js.org/d3.v4.min.js"></script>
 </head>
@@ -31,7 +33,7 @@
       It's difficult to ascertain the influences behind artists when they write a song, let alone craft an entire album. Hoping to find a deeper understanding of their emotional inspiration, we looked at two artists from two, separate genres and compared their use of the word <span style= "color: #ff0055">love</span> across their discography. We chose to analyze <span style= "color: #b8336a; font-weight: bold;">Kanye West</span> from the hip-hop realm and <span style= "color: #73c2fb; font-weight: bold;">Coldplay</span> from the rock/pop genre.
     </div>
     <div id="slider-flex">
-      <svg width="1000" height="1500" id="svg"/>
+      <svg width="1200" height="1500" id="svg"/>
     </div>
 
     <!-- <div id="album-flex">
@@ -53,7 +55,7 @@
     var lyrics = new Object;
     var songs = new Object;
     var reg = /^[a-z]+$/i;
-    var width = 1000;
+    var width = 1200;
     var height = 1500;
     var buffer = 80;
     var coldplayOn = false;
@@ -311,7 +313,7 @@
 
                 var barScale = d3.scaleLinear()
                 .domain([0, 0.0866])
-                .range([0, 200]);
+                .range([50, 300]);
 
                 svg.selectAll("rect")
                 .data(timelineObj)
@@ -339,10 +341,11 @@
                     .attr("stroke-width", 3)
                     .attr("id", "highlight")
                     svg.append("text")
-                    .attr("x", width/2 + 35 + barScale(d[2]))
+                    .attr("x", width/2 + barScale(d[2])/2 + 30)
                     .attr("y", timelineScale(d[1]))
                     .attr("id", "txt")
-                    .attr("fill", d[3])
+                    .attr("fill", "white")
+                    .attr("text-anchor", "middle")
                     .text(String((d[2]*100).toFixed(2))+"%");
                   } else {
                     svg.append("rect")
@@ -355,10 +358,11 @@
                     .attr("stroke-width", 3)
                     .attr("id", "highlight")
                     svg.append("text")
-                    .attr("x", width/2 - 80 - barScale(d[2]))
+                    .attr("x", width/2 - 30 - barScale(d[2])/2 )
                     .attr("y", timelineScale(d[1]))
                     .attr("id", "txt")
-                    .attr("fill", d[3])
+                    .attr("fill", "white")
+                    .attr("text-anchor", "middle")
                     .text(String((d[2]*100).toFixed(2))+"%");
                   }
                 })
@@ -366,12 +370,64 @@
                   svg.select("#txt").remove()
                   svg.select("#highlight").remove()
                 })
+                .on("click", function(d) {
+                  if (d[0] == "coldplay") {
+                    var index = coldplayAlbumYears.indexOf(d[1])
+                    var uName = coldplayAlbumList[index]
+                    var imgName = nameToImage(uName)
+                    svg.append("svg:image")
+                    .attr('x', width-121)
+                    .attr('y', timelineScale(d[1]) - 30 - 35)
+                    .attr('width', 120)
+                    .attr('height', 120)
+                    .attr("xlink:href", String(imgName)+".jpg")
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 2)
+                    .attr("class", "timeline-alb");
+                    svg.append('rect')
+                    .attr('class', 'image-border')
+                    .attr('x', width-121)
+                    .attr('y', timelineScale(d[1]) - 30 - 35)
+                    .attr('width', 120)
+                    .attr('height', 120);
+                    svg.append("line")
+                    .attr("x1", width/2 + barScale(d[2]) + 40)
+                    .attr("x2", width-120-10)
+                    .attr("y1", timelineScale(d[1])-5)
+                    .attr("y2", timelineScale(d[1])-5)
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 5)
+                    .attr("class", "timeline-line");
+                    svg.append("text")
+                    .attr('x', (width/2 + barScale(d[2]) + 40 + width-120-10)/2)
+                    .attr('y', timelineScale(d[1])-15)
+                    .attr("text-anchor", "middle")
+                    .text(uName)
+                    .attr("class", "timeline-title");
+                  }
+                })
 
-              }
-            });
+                console.log(nameToImage("X&Y"))
 
-          }
+              } // end of inner else
+            }); // end of inner await
+
+          } // end of else
         }); //  end of await
+
+        function nameToImage(s) {
+          var lower = s.toLowerCase();
+          var split = lower.split(" ")
+          var returnString = "";
+          split.forEach(function(d) {
+            if (split.indexOf(d) < split.length-1) {
+              returnString += d+"-"
+            } else {
+              returnString += d
+            }
+          })
+          return returnString
+        }
 
   </script>
 </body>
