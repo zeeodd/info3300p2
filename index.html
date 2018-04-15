@@ -20,7 +20,9 @@
 
       #slider-flex { display: flex; flex-direction: row; margin: 0px;}
 
-      .image-border { stroke: black; fill: transparent; }
+      .image-border { stroke: black; fill: transparent; cursor: pointer; }
+
+      .tooltip { stroke: black; fill: white; }
 
       #bar { cursor: pointer; }
 
@@ -32,7 +34,7 @@
   <h1 id="title" onclick="updateColdplay()"> The <span style= "color: #ff0055">Love</span> of Music </h1>
   <div id="all-flex">
     <div id="intro">
-      It's difficult to ascertain the influences behind artists when they write a song, let alone craft an entire album. Hoping to find a deeper understanding of their emotional inspiration, we looked at two artists from two, separate genres and compared their use of the word <span style= "color: #ff0055">love</span> across each album of their discography. We analyze <span style= "color: #b8336a; font-weight: bold;">Kanye West</span> from the hip-hop realm and <span style= "color: #73c2fb; font-weight: bold;">Coldplay</span> from the rock/pop genre.
+      It"s difficult to ascertain the influences behind artists when they write a song, let alone craft an entire album. Hoping to find a deeper understanding of their emotional inspiration, we looked at two artists from two, separate genres and compared their use of the word <span style= "color: #ff0055">love</span> across each album of their discography. We analyze <span style= "color: #b8336a; font-weight: bold;">Kanye West</span> from the hip-hop realm and <span style= "color: #73c2fb; font-weight: bold;">Coldplay</span> from the rock/pop genre.
     </div>
     <div id="slider-flex">
       <svg width="1200" height="1500" id="svg"/>
@@ -309,6 +311,16 @@
             .domain([0, 0.0866])
             .range([50, 300]);
 
+            // "Click Me" text to encourage users to click the bar to see more
+            svg.append("text")
+            .attr("x", width/2 + 70)
+            .attr("y", 58)
+            .attr("id", "click")
+            .attr("fill", "grey")
+            .attr("text-anchor", "middle")
+            .text("Click Me!");
+
+            // The actual percentage bar, that when clicked will open up the respective album artwork
             svg.selectAll("rect")
             .data(timelineObj)
             .enter().append("rect")
@@ -324,9 +336,9 @@
             .attr("width", function(d) { return barScale(d[2]); })
             .attr("fill", function(d) { return d[3]; })
             .attr("id", "bar")
-            .on("mouseover", function(d) {
-              if (d[0] == "coldplay") {
-                svg.append("rect")
+            .on("mouseover", function(d) {  // Mouseover event to see percentages
+              if (d[0] == "coldplay") { // Only Coldplay
+                svg.append("rect")    // Bar with variable width
                 .attr("x", width/2 + 30)
                 .attr("y", timelineScale(d[1]) - 30)
                 .attr("height", 50)
@@ -335,14 +347,14 @@
                 .attr("stroke", "black")
                 .attr("stroke-width", 3)
                 .attr("id", "highlight")
-                svg.append("text")
+                svg.append("text")    // Percentage
                 .attr("x", width/2 + barScale(d[2])/2 + 30)
                 .attr("y", timelineScale(d[1]))
                 .attr("id", "txt")
                 .attr("fill", "white")
                 .attr("text-anchor", "middle")
                 .text(String((d[2]*100).toFixed(2))+"%");
-              } else {
+              } else {  // Same thing but for Kanye
                 svg.append("rect")
                 .attr("x", width/2 - 30 - barScale(d[2]))
                 .attr("y", timelineScale(d[1]) - 30)
@@ -361,117 +373,211 @@
                 .text(String((d[2]*100).toFixed(2))+"%");
               }
             })
-            .on("mouseout", function() {
+            .on("mouseout", function() {  // Remove border/% on mouse out
               svg.select("#txt").remove()
               svg.select("#highlight").remove()
             })
-            .on("click", function(d) {
+            .on("click", function(d) {  // Click to view respective album
+              svg.select("#click").remove() // Remove the first click helper
               if (d[0] == "coldplay") {
-                // special case for head full of stars
+                // Special case for 2015 album
                 if (d[1] == 2015) {
-                  var index = coldplayAlbumYears.indexOf(d[1])
-                  var uName = coldplayAlbumList[index]
-                  var imgName = nameToImage(uName)
-                  svg.append("svg:image")
-                  .attr('x', width-121)
-                  .attr('y', timelineScale(d[1]) - 30 - 35 + 60)
-                  .attr('width', albWidth)
-                  .attr('height', albWidth)
+                  var index = coldplayAlbumYears.indexOf(d[1]) // Index of the specific album to draw
+                  var uName = coldplayAlbumList[index] // Album Name to display
+                  var imgName = nameToImage(uName) // Grabs the .jpg version of the album so read in as the image
+                  svg.append("svg:image") // Album Image
+                  .attr("x", width-121)
+                  .attr("y", timelineScale(d[1]) - 30 - 35 + 60)
+                  .attr("width", albWidth)
+                  .attr("height", albWidth)
                   .attr("xlink:href", String(imgName)+".jpg")
                   .attr("stroke", "black")
                   .attr("stroke-width", 2)
-                  .attr("class", "timeline-alb");
-                  svg.append('rect')
-                  .attr('class', 'image-border')
-                  .attr('x', width-(albWidth+1))
-                  .attr('y', timelineScale(d[1]) - 30 - 35 + 60)
-                  .attr('width', albWidth)
-                  .attr('height', albWidth);
-                  svg.append("line")
+                  .attr("class", "timeline-alb")
+                  svg.append("rect")   // Tooltip
+                  .attr("x", width-(520))
+                  .attr("y", timelineScale(d[1]) - 30 - 35 + 60)
+                  .attr("height", albWidth)
+                  .attr("width", 440)
+                  .attr("class", "tooltip")
+                  .attr("id","tool"+d[1])
+                  .attr("visibility","hidden")
+                  .attr("opacity",0);
+                  svg.append("rect") // Image Border (for mouse events)
+                  .attr("class", "image-border")
+                  .attr("x", width-(albWidth+1))
+                  .attr("y", timelineScale(d[1]) - 30 - 35 + 60)
+                  .attr("width", albWidth)
+                  .attr("height", albWidth)
+                  .on("mouseover", function() { // If user hovers over album, display the tooltip with the album blurb
+                    console.log(d)
+                    d3.select(".timeline-title"+d[1]) // Hide the album name
+                    .style("transition-delay", "0s")
+                    .attr("visibility", "hidden")
+                    d3.select(".timeline-line"+d[1])  // Hide the timeline line
+                    .style("transition-delay", "0s")
+                    .attr("visibility", "hidden")
+                    d3.select(".timeline-line2"+d[1])  // Hide the timeline line
+                    .style("transition-delay", "0s")
+                    .attr("visibility", "hidden")
+                    d3.select(".timeline-line3"+d[1])  // Hide the timeline line
+                    .style("transition-delay", "0s")
+                    .attr("visibility", "hidden")
+                    d3.select("#tool"+d[1]) // Show the tooltip
+                    .transition()
+                    .duration(400)
+                    .attr("transform","translate(-50,0)")
+                    .attr("visibility", "visible")
+                    .attr("opacity", 1)
+                    .attr("transition","visibility 0s linear 400ms, opacity 400ms");
+                  })
+                  .on("mouseout", function() {
+                    // Put everything back to the way it was
+                    d3.select(".timeline-title"+d[1])
+                    .style("transition-delay", "0.3s")
+                    .attr("visibility", "visible");
+                    d3.select(".timeline-line"+d[1])
+                    .style("transition-delay", "0.3s")
+                    .attr("visibility", "visible");
+                    d3.select(".timeline-line2"+d[1])
+                    .style("transition-delay", "0.3s")
+                    .attr("visibility", "visible");
+                    d3.select(".timeline-line3"+d[1])
+                    .style("transition-delay", "0.3s")
+                    .attr("visibility", "visible");
+                    d3.select("#tool"+d[1])
+                    .transition()
+                    .duration(400)
+                    .attr("transform","translate(50,0)")
+                    .attr("opacity", 0)
+                    .attr("transition","opacity 400ms");
+                  });
+                  svg.append("line") // First of THREE timelines lines
                   .attr("x1", width/2 + barScale(d[2]) + 40)
                   .attr("x2", width-240)
                   .attr("y1", timelineScale(d[1])-5)
                   .attr("y2", timelineScale(d[1])-5)
                   .attr("stroke", "black")
                   .attr("stroke-width", 5)
-                  .attr("class", "timeline-line");
-                  svg.append("line")
+                  .attr("class", "timeline-line"+d[1]);
+                  svg.append("line")  // Second of THREE timeline lines
                   .attr("x1", width-240-2)
                   .attr("x2", width-240-2)
                   .attr("y1", timelineScale(d[1])-7)
                   .attr("y2", timelineScale(d[1])-5 + 60)
                   .attr("stroke", "black")
                   .attr("stroke-width", 5)
-                  .attr("class", "timeline-line");
-                  svg.append("line")
+                  .attr("class", "timeline-line2"+d[1]);
+                  svg.append("line")  // Third of THREE timeline lines
                   .attr("x1", width-albWidth*2-4)
                   .attr("x2", width-albWidth-10)
                   .attr("y1", timelineScale(d[1])-5 + 60-2)
                   .attr("y2", timelineScale(d[1])-5 + 60-2)
                   .attr("stroke", "black")
                   .attr("stroke-width", 5)
-                  .attr("class", "timeline-line");
-                  svg.append("text")
-                  .attr('x', (width/2 + barScale(d[2]) + 40 + width-albWidth*2)/2)
-                  .attr('y', timelineScale(d[1])-15)
+                  .attr("class", "timeline-line3"+d[1]);
+                  svg.append("text")  // Album Name to display
+                  .attr("x", (width/2 + barScale(d[2]) + 40 + width-albWidth*2)/2)
+                  .attr("y", timelineScale(d[1])-15)
                   .attr("text-anchor", "middle")
                   .text(uName)
-                  .attr("class", "timeline-title");
+                  .attr("class", "timeline-title"+d[1]);
                 } else {
-                  var index = coldplayAlbumYears.indexOf(d[1])
-                  var uName = coldplayAlbumList[index]
-                  var imgName = nameToImage(uName)
-                  svg.append("svg:image")
-                  .attr('x', width-(albWidth+1))
-                  .attr('y', timelineScale(d[1]) - 30 - 35)
-                  .attr('width', albWidth)
-                  .attr('height', albWidth)
+                  // Regular case for Coldplay
+                  var index = coldplayAlbumYears.indexOf(d[1])  // Index of the specific album to draw
+                  var uName = coldplayAlbumList[index] // Album Name to display
+                  var imgName = nameToImage(uName) // Grabs the .jpg version of the album so read in as the image
+                  svg.append("svg:image") // Album Image
+                  .attr("x", width-(albWidth+1))
+                  .attr("y", timelineScale(d[1]) - 30 - 35)
+                  .attr("width", albWidth)
+                  .attr("height", albWidth)
                   .attr("xlink:href", String(imgName)+".jpg")
                   .attr("stroke", "black")
                   .attr("stroke-width", 2)
-                  .attr("class", "timeline-alb");
-                  svg.append('rect')
-                  .attr('class', 'image-border')
-                  .attr('x', width-(albWidth+1))
-                  .attr('y', timelineScale(d[1]) - 30 - 35)
-                  .attr('width', albWidth)
-                  .attr('height', albWidth);
-                  svg.append("line")
+                  .attr("class", "timeline-alb")
+                  svg.append("rect")   // Tooltip
+                  .attr("x", width-(520))
+                  .attr("y", timelineScale(d[1]) - 30 - 35)
+                  .attr("height", albWidth)
+                  .attr("width", 440)
+                  .attr("class", "tooltip")
+                  .attr("id","tool"+d[1])
+                  .attr("visibility","hidden")
+                  .attr("opacity",0);
+                  svg.append("line")   // Line connecting Bar to Album
                   .attr("x1", width/2 + barScale(d[2]) + 40)
                   .attr("x2", width-albWidth-10)
                   .attr("y1", timelineScale(d[1])-5)
                   .attr("y2", timelineScale(d[1])-5)
                   .attr("stroke", "black")
                   .attr("stroke-width", 5)
-                  .attr("class", "timeline-line");
-                  svg.append("text")
-                  .attr('x', (width/2 + barScale(d[2]) + 40 + width-albWidth-10)/2)
-                  .attr('y', timelineScale(d[1])-15)
+                  .attr("class", "timeline-line"+d[1]);
+                  svg.append("text")  // Album Name to display
+                  .attr("x", (width/2 + barScale(d[2]) + 40 + width-albWidth-10)/2)
+                  .attr("y", timelineScale(d[1])-15)
                   .attr("text-anchor", "middle")
                   .text(uName)
-                  .attr("class", "timeline-title");
+                  .attr("class", "timeline-title"+d[1]);
+                  svg.append("rect") // Album border (for mouse events)
+                  .attr("class", "image-border")
+                  .attr("x", width-(albWidth+1))
+                  .attr("y", timelineScale(d[1]) - 30 - 35)
+                  .attr("width", albWidth)
+                  .attr("height", albWidth)
+                  .on("mouseover", function() { // If user hovers over album, display the tooltip with the album blurb
+                    console.log(d)
+                    d3.select(".timeline-title"+d[1]) // Hide the album name
+                    .style("transition-delay", "0s")
+                    .attr("visibility", "hidden")
+                    d3.select(".timeline-line"+d[1])  // Hide the timeline line
+                    .style("transition-delay", "0s")
+                    .attr("visibility", "hidden")
+                    d3.select("#tool"+d[1]) // Show the tooltip
+                    .transition()
+                    .duration(400)
+                    .attr("transform","translate(-50,0)")
+                    .attr("visibility", "visible")
+                    .attr("opacity", 1)
+                    .attr("transition","visibility 0s linear 400ms, opacity 400ms");
+                  })
+                  .on("mouseout", function() {
+                    // Put everything back to the way it was
+                    d3.select(".timeline-title"+d[1])
+                    .style("transition-delay", "0.3s")
+                    .attr("visibility", "visible")
+                    d3.select(".timeline-line"+d[1])
+                    .style("transition-delay", "0.3s")
+                    .attr("visibility", "visible");
+                    d3.select("#tool"+d[1])
+                    .transition()
+                    .duration(400)
+                    .attr("transform","translate(50,0)")
+                    .attr("opacity", 0)
+                    .attr("transition","opacity 400ms");
+                  });
                 }
 
-              } else { // end of coldplay start of kanye
+              } else { // END OF COLDPLAY START OF KANYE
                 if (d[1] == 2004) {
                   var index = kanyeAlbumYears.indexOf(d[1])
                   var uName = kanyeAlbumList[index]
                   var imgName = nameToImage(uName)
                   svg.append("svg:image")
-                  .attr('x', 1)
-                  .attr('y', timelineScale(d[1]) - 30 - 35 - 60)
-                  .attr('width', albWidth)
-                  .attr('height', albWidth)
+                  .attr("x", 1)
+                  .attr("y", timelineScale(d[1]) - 30 - 35 - 60)
+                  .attr("width", albWidth)
+                  .attr("height", albWidth)
                   .attr("xlink:href", String(imgName)+".jpg")
                   .attr("stroke", "black")
                   .attr("stroke-width", 2)
                   .attr("class", "timeline-alb");
-                  svg.append('rect')
-                  .attr('class', 'image-border')
-                  .attr('x', 1)
-                  .attr('y', timelineScale(d[1]) - 30 - 35 - 60)
-                  .attr('width', albWidth)
-                  .attr('height', albWidth);
+                  svg.append("rect")
+                  .attr("class", "image-border")
+                  .attr("x", 1)
+                  .attr("y", timelineScale(d[1]) - 30 - 35 - 60)
+                  .attr("width", albWidth)
+                  .attr("height", albWidth);
                   svg.append("line")
                   .attr("x1", width/2 - barScale(d[2]) - 40)
                   .attr("x2", albWidth*2)
@@ -497,8 +603,8 @@
                   .attr("stroke-width", 5)
                   .attr("class", "timeline-line");
                   svg.append("text")
-                  .attr('x', (width/2 - barScale(d[2]) - 40 + albWidth*2)/2)
-                  .attr('y', timelineScale(d[1])-15)
+                  .attr("x", (width/2 - barScale(d[2]) - 40 + albWidth*2)/2)
+                  .attr("y", timelineScale(d[1])-15)
                   .attr("text-anchor", "middle")
                   .text(uName)
                   .attr("class", "timeline-title");
@@ -507,20 +613,20 @@
                   var uName = kanyeAlbumList[index]
                   var imgName = nameToImage(uName)
                   svg.append("svg:image")
-                  .attr('x', 1)
-                  .attr('y', timelineScale(d[1]) - 30 - 35 + 60)
-                  .attr('width', albWidth)
-                  .attr('height', albWidth)
+                  .attr("x", 1)
+                  .attr("y", timelineScale(d[1]) - 30 - 35 + 60)
+                  .attr("width", albWidth)
+                  .attr("height", albWidth)
                   .attr("xlink:href", String(imgName)+".jpg")
                   .attr("stroke", "black")
                   .attr("stroke-width", 2)
                   .attr("class", "timeline-alb");
-                  svg.append('rect')
-                  .attr('class', 'image-border')
-                  .attr('x', 1)
-                  .attr('y', timelineScale(d[1]) - 30 - 35 + 60)
-                  .attr('width', albWidth)
-                  .attr('height', albWidth);
+                  svg.append("rect")
+                  .attr("class", "image-border")
+                  .attr("x", 1)
+                  .attr("y", timelineScale(d[1]) - 30 - 35 + 60)
+                  .attr("width", albWidth)
+                  .attr("height", albWidth);
                   svg.append("line")
                   .attr("x1", width/2 - barScale(d[2]) - 40)
                   .attr("x2", albWidth*2)
@@ -546,8 +652,8 @@
                   .attr("stroke-width", 5)
                   .attr("class", "timeline-line");
                   svg.append("text")
-                  .attr('x', (albWidth*2+4 + albWidth+10)/2)
-                  .attr('y', timelineScale(d[1])+72)
+                  .attr("x", (albWidth*2+4 + albWidth+10)/2)
+                  .attr("y", timelineScale(d[1])+72)
                   .attr("text-anchor", "middle")
                   .text(uName)
                   .attr("class", "timeline-title");
@@ -556,20 +662,20 @@
                   var uName = kanyeAlbumList[index]
                   var imgName = nameToImage(uName)
                   svg.append("svg:image")
-                  .attr('x', 1)
-                  .attr('y', timelineScale(d[1]) - 30 - 35 + 60)
-                  .attr('width', albWidth)
-                  .attr('height', albWidth)
+                  .attr("x", 1)
+                  .attr("y", timelineScale(d[1]) - 30 - 35 + 60)
+                  .attr("width", albWidth)
+                  .attr("height", albWidth)
                   .attr("xlink:href", String(imgName)+".jpg")
                   .attr("stroke", "black")
                   .attr("stroke-width", 2)
                   .attr("class", "timeline-alb");
-                  svg.append('rect')
-                  .attr('class', 'image-border')
-                  .attr('x', 1)
-                  .attr('y', timelineScale(d[1]) - 30 - 35 + 60)
-                  .attr('width', albWidth)
-                  .attr('height', albWidth);
+                  svg.append("rect")
+                  .attr("class", "image-border")
+                  .attr("x", 1)
+                  .attr("y", timelineScale(d[1]) - 30 - 35 + 60)
+                  .attr("width", albWidth)
+                  .attr("height", albWidth);
                   svg.append("line")
                   .attr("x1", width/2 - barScale(d[2]) - 40)
                   .attr("x2", albWidth*2)
@@ -595,8 +701,8 @@
                   .attr("stroke-width", 5)
                   .attr("class", "timeline-line");
                   svg.append("text")
-                  .attr('x', (width/2 - barScale(d[2]) - 40 + albWidth*2)/2)
-                  .attr('y', timelineScale(d[1])-15)
+                  .attr("x", (width/2 - barScale(d[2]) - 40 + albWidth*2)/2)
+                  .attr("y", timelineScale(d[1])-15)
                   .attr("text-anchor", "middle")
                   .text(uName)
                   .attr("class", "timeline-title");
@@ -605,20 +711,20 @@
                   var uName = kanyeAlbumList[index]
                   var imgName = nameToImage(uName)
                   svg.append("svg:image")
-                  .attr('x', 1)
-                  .attr('y', timelineScale(d[1]) - 30 - 35)
-                  .attr('width', albWidth)
-                  .attr('height', albWidth)
+                  .attr("x", 1)
+                  .attr("y", timelineScale(d[1]) - 30 - 35)
+                  .attr("width", albWidth)
+                  .attr("height", albWidth)
                   .attr("xlink:href", String(imgName)+".jpg")
                   .attr("stroke", "black")
                   .attr("stroke-width", 2)
                   .attr("class", "timeline-alb");
-                  svg.append('rect')
-                  .attr('class', 'image-border')
-                  .attr('x', 1)
-                  .attr('y', timelineScale(d[1]) - 30 - 35)
-                  .attr('width', albWidth)
-                  .attr('height', albWidth);
+                  svg.append("rect")
+                  .attr("class", "image-border")
+                  .attr("x", 1)
+                  .attr("y", timelineScale(d[1]) - 30 - 35)
+                  .attr("width", albWidth)
+                  .attr("height", albWidth);
                   svg.append("line")
                   .attr("x1", width/2 - barScale(d[2]) - 40)
                   .attr("x2", albWidth+10)
@@ -628,8 +734,8 @@
                   .attr("stroke-width", 5)
                   .attr("class", "timeline-line");
                   svg.append("text")
-                  .attr('x', (width/2 - barScale(d[2]) - 40 + albWidth+10)/2)
-                  .attr('y', timelineScale(d[1])-15)
+                  .attr("x", (width/2 - barScale(d[2]) - 40 + albWidth+10)/2)
+                  .attr("y", timelineScale(d[1])-15)
                   .attr("text-anchor", "middle")
                   .text(uName)
                   .attr("class", "timeline-title");
@@ -656,7 +762,7 @@
         }
       })
       return returnString
-    }
+    };
 
   </script>
 </body>
