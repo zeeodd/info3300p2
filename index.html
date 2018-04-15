@@ -22,6 +22,8 @@
 
       .image-border { stroke: black; fill: transparent; }
 
+      #bar { cursor: pointer; }
+
     </style>
     <script src="https://d3js.org/d3.v4.min.js"></script>
 </head>
@@ -329,6 +331,7 @@
                 .attr("height", 50)
                 .attr("width", function(d) { return barScale(d[2]); })
                 .attr("fill", function(d) { return d[3]; })
+                .attr("id", "bar")
                 .on("mouseover", function(d) {
                   if (d[0] == "coldplay") {
                     svg.append("rect")
@@ -372,38 +375,91 @@
                 })
                 .on("click", function(d) {
                   if (d[0] == "coldplay") {
-                    var index = coldplayAlbumYears.indexOf(d[1])
-                    var uName = coldplayAlbumList[index]
-                    var imgName = nameToImage(uName)
-                    svg.append("svg:image")
-                    .attr('x', width-121)
-                    .attr('y', timelineScale(d[1]) - 30 - 35)
-                    .attr('width', 120)
-                    .attr('height', 120)
-                    .attr("xlink:href", String(imgName)+".jpg")
-                    .attr("stroke", "black")
-                    .attr("stroke-width", 2)
-                    .attr("class", "timeline-alb");
-                    svg.append('rect')
-                    .attr('class', 'image-border')
-                    .attr('x', width-121)
-                    .attr('y', timelineScale(d[1]) - 30 - 35)
-                    .attr('width', 120)
-                    .attr('height', 120);
-                    svg.append("line")
-                    .attr("x1", width/2 + barScale(d[2]) + 40)
-                    .attr("x2", width-120-10)
-                    .attr("y1", timelineScale(d[1])-5)
-                    .attr("y2", timelineScale(d[1])-5)
-                    .attr("stroke", "black")
-                    .attr("stroke-width", 5)
-                    .attr("class", "timeline-line");
-                    svg.append("text")
-                    .attr('x', (width/2 + barScale(d[2]) + 40 + width-120-10)/2)
-                    .attr('y', timelineScale(d[1])-15)
-                    .attr("text-anchor", "middle")
-                    .text(uName)
-                    .attr("class", "timeline-title");
+                    // special case for head full of stars
+                    if (d[1] == 2015) {
+                      var index = coldplayAlbumYears.indexOf(d[1])
+                      var uName = coldplayAlbumList[index]
+                      var imgName = nameToImage(uName)
+                      svg.append("svg:image")
+                      .attr('x', width-121)
+                      .attr('y', timelineScale(d[1]) - 30 - 35 + 60)
+                      .attr('width', 120)
+                      .attr('height', 120)
+                      .attr("xlink:href", String(imgName)+".jpg")
+                      .attr("stroke", "black")
+                      .attr("stroke-width", 2)
+                      .attr("class", "timeline-alb");
+                      svg.append('rect')
+                      .attr('class', 'image-border')
+                      .attr('x', width-121)
+                      .attr('y', timelineScale(d[1]) - 30 - 35 + 60)
+                      .attr('width', 120)
+                      .attr('height', 120);
+                      svg.append("line")
+                      .attr("x1", width/2 + barScale(d[2]) + 40)
+                      .attr("x2", width-240)
+                      .attr("y1", timelineScale(d[1])-5)
+                      .attr("y2", timelineScale(d[1])-5)
+                      .attr("stroke", "black")
+                      .attr("stroke-width", 5)
+                      .attr("class", "timeline-line");
+                      svg.append("line")
+                      .attr("x1", width-240-2)
+                      .attr("x2", width-240-2)
+                      .attr("y1", timelineScale(d[1])-7)
+                      .attr("y2", timelineScale(d[1])-5 + 60)
+                      .attr("stroke", "black")
+                      .attr("stroke-width", 5)
+                      .attr("class", "timeline-line");
+                      svg.append("line")
+                      .attr("x1", width-240-4)
+                      .attr("x2", width-120-10)
+                      .attr("y1", timelineScale(d[1])-5 + 60-2)
+                      .attr("y2", timelineScale(d[1])-5 + 60-2)
+                      .attr("stroke", "black")
+                      .attr("stroke-width", 5)
+                      .attr("class", "timeline-line");
+                      svg.append("text")
+                      .attr('x', (width/2 + barScale(d[2]) + 40 + width-240)/2)
+                      .attr('y', timelineScale(d[1])-15)
+                      .attr("text-anchor", "middle")
+                      .text(uName)
+                      .attr("class", "timeline-title");
+                    } else {
+                      var index = coldplayAlbumYears.indexOf(d[1])
+                      var uName = coldplayAlbumList[index]
+                      var imgName = nameToImage(uName)
+                      svg.append("svg:image")
+                      .attr('x', width-121)
+                      .attr('y', timelineScale(d[1]) - 30 - 35)
+                      .attr('width', 120)
+                      .attr('height', 120)
+                      .attr("xlink:href", String(imgName)+".jpg")
+                      .attr("stroke", "black")
+                      .attr("stroke-width", 2)
+                      .attr("class", "timeline-alb");
+                      svg.append('rect')
+                      .attr('class', 'image-border')
+                      .attr('x', width-121)
+                      .attr('y', timelineScale(d[1]) - 30 - 35)
+                      .attr('width', 120)
+                      .attr('height', 120);
+                      svg.append("line")
+                      .attr("x1", width/2 + barScale(d[2]) + 40)
+                      .attr("x2", width-120-10)
+                      .attr("y1", timelineScale(d[1])-5)
+                      .attr("y2", timelineScale(d[1])-5)
+                      .attr("stroke", "black")
+                      .attr("stroke-width", 5)
+                      .attr("class", "timeline-line");
+                      svg.append("text")
+                      .attr('x', (width/2 + barScale(d[2]) + 40 + width-120-10)/2)
+                      .attr('y', timelineScale(d[1])-15)
+                      .attr("text-anchor", "middle")
+                      .text(uName)
+                      .attr("class", "timeline-title");
+                    }
+
                   }
                 })
 
