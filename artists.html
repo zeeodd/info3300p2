@@ -277,6 +277,7 @@
                             svg.append("text")
                                 .attr("transform", "translate(" + (svgWidth/2) + ", 20)")
                                 .attr("text-anchor", "middle")
+                                .attr("font-size", "20px")
                                 .attr("alignment-baseline", "central")
                                 .text(title);
                 
@@ -291,6 +292,14 @@
                                 .attr("text-anchor", "middle")
                                 .attr("alignment-baseline", "central")
                                 .text(xAxisLabel);
+                            
+                            var wordLabel = svg.append("text")
+                                .attr("transform", "translate(" + (svgWidth - 150) + ", 80)")
+                                .attr("text-anchor", "middle")
+                                .attr("alignment-baseline", "central")
+                                .text("");
+                            
+                            return wordLabel;
                         }
                         
                         var prideXScale = d3.scaleLinear()
@@ -318,6 +327,8 @@
                             .x(function (d, i) { return prideXScale(i+1) })
                             .y(function (d, i) { return prideYScale(d.count) });
                         
+                        var prideWordLabel = addLabels("Pride and Prejudice Word Usage", "Word Frequency", "Word Count Rank", prideSvg);
+                        
                         prideSvg.selectAll("path")
                             .data([prideData])
                             .enter()
@@ -333,9 +344,15 @@
                             .attr("cy", function (d) { return prideYScale(d.count) })
                             .attr("r", 3)
                             .attr("fill", "grey")
-                            .attr("opacity", "0.4");
+                            .attr("opacity", "0.4")
+                            .on('mouseover', function (d, i) {
+                                prideWordLabel.text(d[0]);
+                            })
+                            .on('mouseout', function (d, i) {
+                                prideWordLabel.text("");
+                            });
                         
-                        addLabels("Pride and Prejudice Word Usage", "Word Frequency", "Word Count Rank", prideSvg);
+                        
                         
                         var numLyricsSliced = 100;
                         
@@ -393,10 +410,10 @@
                             .call(logFreqAxis)
                             .attr("transform", "translate(" + PADDING + ", 0)");
                         
-                        addLabels("Musician Word Usage", "Word Frequency", "Word Count Rank", artistSvg);
+                        var musicWordLabel = addLabels("Musician Word Usage", "Word Frequency", "Word Count Rank", artistSvg);
 
 
-                        var plotZipfs = function plotZipfsLine(svg, xScale, yScale, artistName) {
+                        var plotZipfs = function plotZipfsLine(svg, xScale, yScale, artistName, wordLabel) {
                             var artistDict = artistDataDict[artistName];
                             var circleGroup = artistDict.circleGroup;
                             var lyricArr = artistDict.lyricCount.slice(0, numLyricsSliced);
@@ -420,12 +437,18 @@
                                 .enter().append("circle")
                                 .attr("cx", function (d, i) { return xScale(i+1) })
                                 .attr("cy", function (d) { return yScale(d[1]) })
-                                .attr("r", 3)
+                                .attr("r", 4)
                                 .attr("fill", artistDict.color)
-                                .attr("opacity", "0.4");
+                                .attr("opacity", "0.4")
+                                .on('mouseover', function (d, i) {
+                                    wordLabel.text(d[0]);
+                                })
+                                .on('mouseout', function (d, i) {
+                                    wordLabel.text("");
+                                });
                         }
                         
-                        var displayHighlightedWord = function highlightWord(artistName, xScale, yScale, word) {
+                        var displayHighlightedWord = function highlightWord(artistName, xScale, yScale, word, wordLabel) {
                             var artistDict = artistDataDict[artistName];
                             var lyricArr = artistDict.lyricCount;
                             var circleGroup = artistDict.circleGroup;
@@ -438,7 +461,13 @@
                                         .attr("r", 8)
                                         .attr("fill", artistDict.color)
                                         .attr("opacity", "0.9")
-                                        .attr("class", "highlight-word");
+                                        .attr("class", "highlight-word")
+                                        .on('mouseover', function () {
+                                            wordLabel.text(word);
+                                        })
+                                        .on('mouseout', function (d, i) {
+                                            wordLabel.text("");
+                                        });
                                     return;
                                 }
                             }
@@ -460,9 +489,9 @@
                                 var curXScale = selectedScale === "linear" ? linearRankScale : logRankScale;
                                 var curYScale = selectedScale === "linear" ? linearFreqScale : logFreqScale;
                                 
-                                plotZipfs(artistSvg, curXScale, curYScale, artistName);
+                                plotZipfs(artistSvg, curXScale, curYScale, artistName, musicWordLabel);
                                 if (highlightedWord !== "none") {
-                                    displayHighlightedWord(artistName, curXScale, curYScale, highlightedWord);
+                                    displayHighlightedWord(artistName, curXScale, curYScale, highlightedWord, musicWordLabel);
                                 }
                             });                            
                         }
@@ -506,9 +535,9 @@
                                 var curXScale = selectedScale === "linear" ? linearRankScale : logRankScale;
                                 var curYScale = selectedScale === "linear" ? linearFreqScale : logFreqScale;
                                 
-                                plotZipfs(artistSvg, curXScale, curYScale, artistName);
+                                plotZipfs(artistSvg, curXScale, curYScale, artistName, musicWordLabel);
                                 if (highlightedWord !== "none") {
-                                    displayHighlightedWord(artistName, curXScale, curYScale, highlightedWord);
+                                    displayHighlightedWord(artistName, curXScale, curYScale, highlightedWord, musicWordLabel);
                                 }
                                 activeArtists.add(artistName);
                             }
@@ -524,7 +553,7 @@
                             
                             activeArtists.forEach(function (artistName) {
                                 hideHighlightedWord(artistName);
-                                displayHighlightedWord(artistName, curXScale, curYScale, selectedWord);
+                                displayHighlightedWord(artistName, curXScale, curYScale, selectedWord, musicWordLabel);
                             });
                         });
                         
