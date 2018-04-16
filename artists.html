@@ -105,8 +105,12 @@
                     </div>
                     <p class='artist-label'>Taylor Swift</p>
                 </div>
+                <div class='col-xs-8'>
+                    Number Lyrics Accounted For: 
+                    <input class='zoom-slider' type="range" min="50" max="4000" step="1">
+                </div> 
             </div>
-                        <script>
+            <script>
                 var LYRIC_REGEX = /^[a-z]+$/i;
                 var LOCAL_FILEPATH = "data/";
                 var artistData;
@@ -249,23 +253,31 @@
                         var prideSvgHeight = prideSvg.style("height");
                         var PADDING = 30;
                         var numLyricsSliced = 100;
+                        
+                        var generateScale = function generateXScale() {
+                            var linearScale = d3.scaleLinear()
+                                .domain([0, numLyricsSliced])
+                                .range([PADDING, (artistSvgWidth - PADDING)]);
+                            
+                            var logScale = d3.scaleLog()
+                                .domain([1, numLyricsSliced])
+                                .range([PADDING, (artistSvgWidth - PADDING)]);
+                            return { linear: linearScale, log: logScale };
+                        }
 
+                        var scales = generateScale();
                         // set up scales
-                        var linearRankScale = d3.scaleLinear()
-                        .domain([0, numLyricsSliced])
-                        .range([PADDING, (artistSvgWidth - PADDING)]);
+                        var linearRankScale = scales.linear;
 
                         var linearFreqScale = d3.scaleLinear()
-                        .domain([0, maxWordFrequency])
-                        .range([(artistSvgHeight - PADDING), PADDING]);
+                            .domain([0, maxWordFrequency])
+                            .range([(artistSvgHeight - PADDING), PADDING]);
 
-                        var logRankScale = d3.scaleLog()
-                        .domain([1, numLyricsSliced])
-                        .range([PADDING, (artistSvgWidth - PADDING)]);
+                        var logRankScale = scales.linear;
 
                         var logFreqScale = d3.scaleLog()
-                        .domain([1, maxWordFrequency])
-                        .range([(artistSvgHeight - PADDING), PADDING]);
+                            .domain([1, maxWordFrequency])
+                            .range([(artistSvgHeight - PADDING), PADDING]);
 
                         var linearRankAxis = d3.axisBottom(linearRankScale);
                         var linearFreqAxis = d3.axisLeft(linearFreqScale);
@@ -273,20 +285,24 @@
                         var logFreqAxis = d3.axisLeft(logFreqScale);
 
                         var linearScaleElementGroup = artistSvg.append("g")
-                        .attr("class", "linear-scale active");
+                            .attr("class", "linear-scale active");
+
                         linearScaleElementGroup.append("g")
                             .call(linearRankAxis)
-                            .attr("transform", "translate(0, " + (artistSvgHeight - PADDING) + ")");
+                            .attr("transform", "translate(0, " + (artistSvgHeight - PADDING) + ")")
+                            .attr("class", "x-element-axis");
+
                         linearScaleElementGroup.append("g")
                             .call(linearFreqAxis)
                             .attr("transform", "translate(" + String(PADDING) + ", 0)");
 
                         var logScaleElementGroup = artistSvg.append("g")
-                        .attr("class", "log-scale");
+                            .attr("class", "log-scale");
 
                         logScaleElementGroup.append("g")
                             .call(logRankAxis)
-                            .attr("transform", "translate(0, " + (artistSvgHeight - PADDING) + ")");
+                            .attr("transform", "translate(0, " + (artistSvgHeight - PADDING) + ")")
+                            .attr("class", "x-element-axis");
 
                         logScaleElementGroup.append("g")
                             .call(logFreqAxis)
@@ -338,12 +354,53 @@
                                     return;
                                 }
                             }
-                            console.log("Not found in sliced version");
                         }
                         
                         var hideHighlightedWord = function hideWord(artistName) {
                             var circleGroup = artistDataDict[artistName].circleGroup;
                             circleGroup.select(".highlight-word").remove();
+                        }
+                        
+                        var replotArtists = function replotActiveArtists() {
+                            activeArtists.forEach(function (artistName) {
+                                var artistDict = artistDataDict[artistName];
+                                var circleGroup = artistDict.circleGroup;
+                                
+                                circleGroup.select(".element-group").remove()
+                                hideHighlightedWord(artistName);
+                                
+                                var curXScale = selectedScale === "linear" ? linearRankScale : logRankScale;
+                                var curYScale = selectedScale === "linear" ? linearFreqScale : logFreqScale;
+                                
+                                plotZipfs(artistSvg, curXScale, curYScale, artistName);
+                                if (highlightedWord !== "none") {
+                                    displayHighlightedWord(artistName, curXScale, curYScale, highlightedWord);
+                                }
+                            });                            
+                        }
+                        
+                        var updateAxes = function updateAxes(numRanks) {
+                            numLyricsSliced = numRanks;
+                            var scales = generateScale();
+                            
+                            linearRankScale = scales.linear;
+                            logRankScale = scales.linear;
+                            
+                            linearRankAxis = d3.axisBottom(linearRankScale);
+                            logRankAxis = d3.axisBottom(logRankScale);
+                            
+                            linearScaleElementGroup.select(".x-element-axis").remove();
+                            logScaleElementGroup.select(".x-element-axis").remove();
+                            
+                            linearScaleElementGroup.append("g")
+                                .call(linearRankAxis)
+                                .attr("transform", "translate(0, " + (artistSvgHeight - PADDING) + ")")
+                                .attr("class", "x-element-axis");
+                            
+                            logScaleElementGroup.append("g")
+                                .call(logRankAxis)
+                                .attr("transform", "translate(0, " + (artistSvgHeight - PADDING) + ")")
+                                .attr("class", "x-element-axis");
                         }
 
                         var artistCells = d3.selectAll(".artist-img");
@@ -387,23 +444,19 @@
                         scaleSelector.on('change', function () {
                             var pickedScale = this.value;
                             selectedScale = pickedScale;
+
+                            linearScaleElementGroup.classed("active", !linearScaleElementGroup.classed("active"));
+                            logScaleElementGroup.classed("active", !linearScaleElementGroup.classed("active"));
                             
-                            activeArtists.forEach(function (artistName) {
-                                var artistDict = artistDataDict[artistName];
-                                var circleGroup = artistDict.circleGroup;
-                                
-                                circleGroup.select(".element-group").remove()
-                                hideHighlightedWord(artistName);
-                                
-                                var curXScale = selectedScale === "linear" ? linearRankScale : logRankScale;
-                                var curYScale = selectedScale === "linear" ? linearFreqScale : logFreqScale;
-                                
-                                plotZipfs(artistSvg, curXScale, curYScale, artistName);
-                                if (highlightedWord !== "none") {
-                                    displayHighlightedWord(artistName, curXScale, curYScale, highlightedWord);
-                                }
-                            });
-                        })
+                            replotArtists();
+                        });
+                        
+                        var zoomSlider = d3.select(".zoom-slider");
+                        zoomSlider.on("input", function () {
+                            var numRanks = this.value;
+                            updateAxes(numRanks);
+                            replotArtists();
+                        });
 
                     }; // end of else
                 });
