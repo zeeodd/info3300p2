@@ -1,0 +1,378 @@
+<!Doctype HTML>
+<html>
+
+<!-- DATASET: https://www.kaggle.com/slickwilly/kanye-west-discography/data -->
+
+<head>
+    <title>Project 2</title>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Slabo+27px" rel="stylesheet">
+    <style>
+      body { text-align: center; font-family: "Slabo 27px"}
+
+      svg { margin-left: auto; margin-right: auto; display: block; order: 1; background-color: white; }
+
+      #title { font-size: 60px; margin: 20px; padding: 0px; }
+
+      #intro { width: 650px; text-align: justify; }
+
+      #all-flex { display: flex; flex-direction: column; justify-content: space-between; width: 100%; align-items: center; }
+
+      #slider-flex { display: flex; flex-direction: row; margin: 0px;}
+
+    </style>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+
+<body>
+  <h1 id="title" onclick="updateColdplay()"> The <span style= "color: #ff0055">Love</span> of Music </h1>
+  <div id="all-flex">
+    <div id="intro">
+      It's difficult to ascertain the influences behind artists when they write a song, let alone craft an entire album. Hoping to find a deeper understanding of their emotional inspiration, we looked at two artists from two, separate genres and compared their use of the word <span style= "color: #ff0055">love</span> across their discography. We chose to analyze <span style= "color: #b8336a; font-weight: bold;">Kanye West</span> from the hip-hop realm and <span style= "color: #73c2fb; font-weight: bold;">Coldplay</span> from the rock/pop genre.
+    </div>
+    <div id="slider-flex">
+      <svg width="1000" height="1500" id="svg"/>
+    </div>
+
+    <!-- <div id="album-flex">
+      <div class="album-date">
+        <input id="album1" name="updateButton" type="image" src="kanye.jpg" value="College Dropout" onclick="updateKanye()" />
+        Kanye West
+      </div>
+
+      <div class="album-date">
+        <input id="album2" name="updateButton" type="image" src="coldplay.jpg" value="Late Registration" />
+        Coldplay
+      </div>
+    </div> -->
+
+  </div>
+
+  <script>
+
+    var lyrics = new Object;
+    var songs = new Object;
+    var reg = /^[a-z]+$/i;
+    var width = 1000;
+    var height = 1500;
+    var buffer = 80;
+    var coldplayOn = false;
+    var kanyeOn = false;
+    var kanyeAlbumList = ["The College Dropout", "Late Registration", "Graduation", "808s & Heartbreak", "My Beautiful Dark Twisted Fantasy", "Watch the Throne", "Yeezus", "The Life of Pablo"];
+    var kanyeAlbumYears = [2004, 2005, 2007, 2008, 2010, 2011, 2013, 2016]
+    var coldplayAlbumList = ["Parachutes", "A Rush of Blood to the Head", "X&Y", "Viva La Vida", "Prospekt's March", "Mylo Xyloto", "Ghost Stories", "A Head Full of Dreams"];
+    var coldplayAlbumYears = [2000, 2002, 2005, 2008, 2008, 2011, 2014, 2015]
+
+
+        d3.queue()
+        .defer(d3.csv, "coldplaylyrics.csv")
+        .defer(d3.csv, "stopwords.csv") // file2
+        .await(function(error, file, file2) {
+          if (error) {
+            console.log("ERROR: " + error)
+          } else {
+
+            var stopwordArr = [];
+
+            file2.forEach(function(w) {
+              if (!(w["words"] == "")) {
+                stopwordArr.push(w["words"])
+              }
+            })
+
+            albums = d3.nest()
+            .key(function (d) { return d.Album; })
+            .entries(file);
+
+            albums.forEach(function(d) {
+              lyrics[d.key] = []
+              songs[d.key] = []
+            });
+
+            albums.forEach(function(d) {
+              d.values.forEach(function(i) {
+                var lower = i.Lyrics.toLowerCase();
+                var split = lower.split(/[\s,?!.]+/);
+                var cleanArr = [];
+                split.forEach(function(t) {
+                  if(reg.test(t)) {
+                    if (!(stopwordArr.indexOf(t) > -1)) {
+                      cleanArr.push(t)
+                    }
+
+                  }
+                });
+                lyrics[i.Album].push(cleanArr);
+                songs[i.Album].push(i.Song);
+              });
+            });
+
+            // specific album objects
+            var list = []
+
+            for (var j = 0; j < coldplayAlbumList.length; j++) {
+              var count = 0
+              var obj = new Object;
+              for (var i = 0; i < lyrics[coldplayAlbumList[j]].length; i++) {
+                lyrics[coldplayAlbumList[j]][i].forEach(function(t) {
+                  if (obj[t] == null) {
+                    obj[t] = 1
+                    count++
+                  } else {
+                    obj[t] += 1
+                    count++
+                  }
+                })
+              } // end of i
+              list.push(obj)
+            } // end of j
+
+            console.log(list)
+
+            sortableList = [];
+            for (var alb in list) {
+              var l = [];
+              for (var w in list[alb]) {
+                l.push([w, list[alb][w]]);
+              }
+              var sorted = l.sort(function(a, b) {
+                return b[1] - a[1];
+              });
+              sortableList.push(sorted)
+            }
+
+            console.log("MYLO KYLOT", sortableList[5])
+
+            var coldplayLoveList = []
+
+            for (var i in sortableList) {
+              if (i == 5) {
+                coldplayLoveList.push([coldplayAlbumList[i], 0])
+              }
+              for (var w in sortableList[i]) {
+                if (sortableList[i][w][0] == "love") {
+                  coldplayLoveList.push([coldplayAlbumList[i], Number((sortableList[i][w][1]/sortableList[i].length).toFixed(4))])
+                }
+              }
+            }
+
+            console.log(coldplayLoveList)
+
+            var svg = d3.select("#svg");
+
+            var timelineScale = d3.scaleLinear()
+            .domain([1999, 2017])
+            .range([10, height-3]);
+
+            var timeline = []
+            for (var i = 0; i < 18; i++) {
+              timeline.push(1999+i)
+            }
+
+            svg.selectAll("line")
+            .data(timeline)
+            .enter().append("line")
+            .attr("x1", width/2)
+            .attr("x2", width/2)
+            .attr("y1", function(d) {
+              return timelineScale(d) + 10
+            })
+            .attr("y2", function(d) {
+              return timelineScale(d) + (height/19) - 15
+            })
+            .attr("stroke", "black")
+            .attr("stroke-width", 5);
+
+            var t = svg.selectAll("text")
+            .data(timeline)
+            .enter().append("text")
+            .attr("id",function(d,i) {return "time"+i;} )
+            .attr("x", width/2)
+            .attr("y", function(d) { return timelineScale(d); })
+            .attr("text-anchor", "middle")
+            .text(function(d) {
+              if (Number(d) > 1999) {
+                return String(d);
+              }
+            })
+            .on("mouseover", function(d,i) {
+              d3.select('#time'+i)
+              .attr("font-size", 20)
+              .style("cursor", "default");
+            })
+            .on("mouseout", function(d) {
+              t.attr("font-size", 16)
+            });
+
+            // READING IN THE KANYE DATA
+            d3.queue()
+            .defer(d3.csv, "kanye-lyrics-1.csv")
+            .defer(d3.csv, "stopwords.csv") // file2
+            .await(function(error, file, file2) {
+              if (error) {
+                console.log("ERROR: " + error)
+              } else {
+
+                var stopwordArr = [];
+
+                file2.forEach(function(w) {
+                  if (!(w["words"] == "")) {
+                    stopwordArr.push(w["words"])
+                  }
+                })
+
+                albums = d3.nest()
+                .key(function (d) { return d.Album; })
+                .entries(file);
+
+                albums.forEach(function(d) {
+                  lyrics[d.key] = []
+                  songs[d.key] = []
+                });
+
+                albums.forEach(function(d) {
+                  d.values.forEach(function(i) {
+                    var lower = i.Lyrics.toLowerCase();
+                    var split = lower.split(/[\s,?!.]+/);
+                    var cleanArr = [];
+                    split.forEach(function(t) {
+                      if(reg.test(t)) {
+                        if (!(stopwordArr.indexOf(t) > -1)) {
+                          cleanArr.push(t)
+                        }
+
+                      }
+                    });
+                    lyrics[i.Album].push(cleanArr);
+                    songs[i.Album].push(i.Song);
+                  });
+                });
+
+                // specific album objects
+                var list = []
+
+                for (var j = 0; j < kanyeAlbumList.length; j++) {
+                  var count = 0
+                  var obj = new Object;
+                  for (var i = 0; i < lyrics[kanyeAlbumList[j]].length; i++) {
+                    lyrics[kanyeAlbumList[j]][i].forEach(function(t) {
+                      if (obj[t] == null) {
+                        obj[t] = 1
+                        count++
+                      } else {
+                        obj[t] += 1
+                        count++
+                      }
+                    })
+                  } // end of i
+                  list.push(obj)
+                } // end of j
+
+                sortableList = [];
+                for (var alb in list) {
+                  var l = [];
+                  for (var w in list[alb]) {
+                    l.push([w, list[alb][w]]);
+                  }
+                  var sorted = l.sort(function(a, b) {
+                    return b[1] - a[1];
+                  });
+                  sortableList.push(sorted)
+                }
+
+                var kanyeLoveList = []
+
+                for (var i in sortableList) {
+                  for (var w in sortableList[i]) {
+                    if (sortableList[i][w][0] == "love") {
+                      kanyeLoveList.push([kanyeAlbumList[i], Number((sortableList[i][w][1]/sortableList[i].length).toFixed(4))])
+                    }
+                  }
+                }
+
+                console.log(kanyeLoveList)
+
+                var timelineObjColdplay = []
+                var timelineObjKanye = []
+
+                for (var j = 0; j < coldplayAlbumYears.length; j++) {
+                  var obj =  ["coldplay", coldplayAlbumYears[j], coldplayLoveList[j][1], "#73c2fb"]
+                  timelineObjColdplay.push(obj)
+                }
+                for (var j = 0; j < kanyeAlbumYears.length; j++) {
+                  var obj =  ["kanye", kanyeAlbumYears[j], kanyeLoveList[j][1], "#b8336a"]
+                  timelineObjKanye.push(obj)
+                }
+
+                console.log("COLDPLAY", timelineObjColdplay)
+                console.log("KANYE", timelineObjKanye)
+
+                var timelineObj = timelineObjColdplay.concat(timelineObjKanye);
+
+                var barScale = d3.scaleLinear()
+                .domain([0, 0.0866])
+                .range([0, 200]);
+
+                svg.selectAll("rect")
+                .data(timelineObj)
+                .enter().append("rect")
+                .attr("x", function(d) {
+                  if (d[0] == "coldplay") {
+                    return width/2 + 30;
+                  } else {
+                    return width/2 - 30 - barScale(d[2]);
+                  }
+                })
+                .attr("y", function(d) { return timelineScale(d[1]) - 30; })
+                .attr("height", 50)
+                .attr("width", function(d) { return barScale(d[2]); })
+                .attr("fill", function(d) { return d[3]; })
+                .on("mouseover", function(d) {
+                  if (d[0] == "coldplay") {
+                    svg.append("rect")
+                    .attr("x", width/2 + 30)
+                    .attr("y", timelineScale(d[1]) - 30)
+                    .attr("height", 50)
+                    .attr("width", barScale(d[2]))
+                    .attr("fill", "none")
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 3)
+                    .attr("id", "highlight")
+                    svg.append("text")
+                    .attr("x", width/2 + 35 + barScale(d[2]))
+                    .attr("y", timelineScale(d[1]))
+                    .attr("id", "txt")
+                    .attr("fill", d[3])
+                    .text(String((d[2]*100).toFixed(2))+"%");
+                  } else {
+                    svg.append("rect")
+                    .attr("x", width/2 - 30 - barScale(d[2]))
+                    .attr("y", timelineScale(d[1]) - 30)
+                    .attr("height", 50)
+                    .attr("width", barScale(d[2]))
+                    .attr("fill", "none")
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 3)
+                    .attr("id", "highlight")
+                    svg.append("text")
+                    .attr("x", width/2 - 80 - barScale(d[2]))
+                    .attr("y", timelineScale(d[1]))
+                    .attr("id", "txt")
+                    .attr("fill", d[3])
+                    .text(String((d[2]*100).toFixed(2))+"%");
+                  }
+                })
+                .on("mouseout", function() {
+                  svg.select("#txt").remove()
+                  svg.select("#highlight").remove()
+                })
+
+              }
+            });
+
+          }
+        }); //  end of await
+
+  </script>
+</body>
+</html>
