@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Artist Concept</title>
+        <style>
+            .svg-styles { border: 1px #000 solid; }
+            .artist-cell { margin-top: 10px; }
+            .artist-img { width: 100%; opacity: 1; transition: 0.3s; }
+            .artist-label { text-align: center; }
+            .section-header { text-align: center; font-size: 24px; margin-bottom: 20px; }
+            .linear-scale, .log-scale { opacity: 0; }
+            .active { opacity: 1; }
+            .row { margin-bottom: 50px; }
+            .coldplay-overlay { background-color: red; }
+            .kanye-overlay { background-color: orange; }
+            .keith-overlay { background-color: green; }
+            .taylor-overlay { background-color: pink; }
+            .rihanna-overlay { background-color: blue; }
+            .linkin-overlay { background-color: black; }
+            .overlay { transition: 0.3s; }
+            .artist-img-active { opacity: 0.5; }
+        </style>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+    </head>
+    <body>
+        <main class='container'>
+            <div class='row'>
+                <div class='col-xs-12 section-header'>
+                    Zipf's Law Proof of Concept
+                </div>
+                <div class='text-paragraph col-xs-offset-2 col-xs-8'>
+                    Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something 
+                </div>
+            </div>
+            
+            <div class='row'>
+                <svg class='col-xs-offset-2 col-xs-8 svg-styles pride-svg' height="400"></svg>
+            </div>
+            
+            <div class='row'>
+                <div class='col-xs-12 section-header'>
+                    But Zipf's Law also applies to music lyrics!
+                </div>
+                <div class='text-paragraph col-xs-offset-2 col-xs-8'>
+                    Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something 
+                </div>
+            </div>
+
+            <div class='row'>
+                <svg class='svg-styles artist-svg col-xs-8' height="625"></svg>
+                <div class='col-xs-4'>
+                    Significant Words:
+                    <select class='word-selector'>
+                        <option value="none">Select Word</option>
+                        <option value="love">Love</option>
+                        <option value="money">Money</option>
+                        <option value="god">God</option>
+                        <option value="black">Black</option>
+                    </select>
+                </div>
+                <div class='col-xs-4'>
+                    Scale:
+                    <select class='scale-selector'>
+                        <option value="linear">Linear</option>
+                        <option value="log">Log</option>
+                    </select>
+                </div>
+                <div class='col-xs-2 artist-cell'>
+                    <div class='overlay coldplay-overlay'>
+                        <img class='artist-img' id='coldplay' src='images/drake.jpg' alt='Coldplay Portrait'>
+                    </div>
+
+                    <p class='artist-label'>Coldplay</p>
+                </div>
+                <div class='col-xs-2 artist-cell'>
+                    <div class='overlay kanye-overlay'>
+                        <img class='artist-img' id='kanye' src='images/chance.jpg' alt='Kanye West Portrait'>
+                    </div>
+                    <p class='artist-label'>Kanye West</p>
+                </div>
+                <div class='col-xs-2 artist-cell'>
+                    <div class='overlay keith-overlay'>
+                        <img class='artist-img' id='keith' src='images/swift.jpg' alt='Keith Urban Portrait'>
+                    </div>
+                    <p class='artist-label'>Keith Urban</p>
+                </div>
+                <div class='col-xs-2 artist-cell'>
+                    <div class='overlay linkin-overlay'>
+                        <img class='artist-img' id='linkin' src='images/kanye.jpg' alt='Linkin Park Portrait'>
+                    </div>
+                    <p class='artist-label'>Linkin Park</p>
+                </div>
+                <div class='col-xs-2 artist-cell'>
+                    <div class='overlay rihanna-overlay'>
+                        <img class='artist-img' id='rihanna' src='images/kanye.jpg' alt='Rihanna Portrait'>
+                    </div>
+                    <p class='artist-label'>Rihanna</p>
+                </div>
+                <div class='col-xs-2 artist-cell'>
+                    <div class='overlay taylor-overlay'>
+                        <img class='artist-img' id='taylor' src='images/kanye.jpg' alt='Taylor Swift Portrait'>
+                    </div>
+                    <p class='artist-label'>Taylor Swift</p>
+                </div>
+            </div>
+                        <script>
+                var LYRIC_REGEX = /^[a-z]+$/i;
+                var LOCAL_FILEPATH = "data/";
+                var artistData;
+
+                d3.queue()
+                    .defer(d3.csv, LOCAL_FILEPATH + "coldplaylyrics.csv")
+                    .defer(d3.csv, LOCAL_FILEPATH + "kanyewestlyrics.csv")
+                    .defer(d3.csv, LOCAL_FILEPATH + "keithurbanlyrics.csv")
+                    .defer(d3.csv, LOCAL_FILEPATH + "linkinparklyrics.csv")
+                    .defer(d3.csv, LOCAL_FILEPATH + "rihannalyrics.csv")
+                    .defer(d3.csv, LOCAL_FILEPATH + "taylorswiftlyrics.csv")
+                    .defer(d3.csv, LOCAL_FILEPATH + "stopwords.csv")
+                    .await(function(error, coldplayData, kanyewestData, keithurbanData, linkinparkData, rihannaData, taylorswiftData, stopwords) {
+                    if (error) {
+                        console.log("ERROR: " + error)
+                    } else {
+
+                        // Read in stopwords and build an array with it
+                        var stopwordArr = [];
+                        stopwords.forEach(function(w) {
+                            if (!(w["words"] == "")) {
+                                stopwordArr.push(w["words"])
+                            }
+                        });
+
+                        var allData = [coldplayData, kanyewestData, keithurbanData, linkinparkData, rihannaData, taylorswiftData]
+                        var allArtists = ["Coldplay", "Kanye West", "Keith Urban", "Linkin Park", "Rihanna", "Taylor Swift"]
+
+                        var artistArr = [];
+
+                        for (var i = 0; i < 6; i++) { //6
+                            var currentData = allData[i]
+                            var artistLyrics = []
+                            var artist;
+                            currentData.forEach(function(d) {
+                                var lower = d.Lyrics.toLowerCase();
+                                var split = lower.split(/[\s,?!.:()<>/]+/);
+                                split.forEach(function(t) {
+                                    if(LYRIC_REGEX.test(t)) {
+                                        if (!(stopwordArr.indexOf(t) > -1)) {
+                                            artistLyrics.push(t)
+                                        }
+                                    }
+                                });
+                            })
+                            artistArr.push([allArtists[i], artistLyrics])
+                        }
+
+                        var artistFreqArr = [];
+
+                        artistArr.forEach(function(d) { // go through each artist
+                            var artist = d[0]
+                            var lyrics = d[1]
+                            var count = 0;
+                            var obj = new Object;
+                            lyrics.forEach(function(w) {
+                                if (obj[w] == null) {
+                                    obj[w] = 1;
+                                    count++;
+                                } else {
+                                    obj[w] += 1;
+                                    count++;
+                                }
+                            });
+                            artistFreqArr.push([artist, obj])
+                        }); // end of outter
+
+                        sortedArtistList = [];
+                        artistFreqArr.forEach(function(d) {
+                            var artist = d[0]
+                            var list = d[1]
+                            var l = []
+                            for (var w in list) {
+                                l.push([w, list[w]])
+                            }
+                            var sorted = l.sort(function(a, b) {
+                                return b[1] - a[1];
+                            });
+                            sortedArtistList.push([d[0], sorted]);
+                        });
+
+                        console.log(sortedArtistList)
+                        artistData = sortedArtistList;
+                        console.log(artistData);
+
+                        var artistShortMapping = {
+                            "Coldplay": "coldplay",
+                            "Kanye West": "kanye",
+                            "Keith Urban": "keith",
+                            "Linkin Park": "linkin",
+                            "Rihanna": "rihanna",
+                            "Taylor Swift": "taylor"
+                        };
+                        
+                        var artistColorMapping = {
+                            "Coldplay": "red",
+                            "Kanye West": "orange",
+                            "Keith Urban": "green",
+                            "Linkin Park": "black",
+                            "Rihanna": "blue",
+                            "Taylor Swift": "pink"
+                        };
+                        
+                        // artistName: group containing line
+                        var activeArtists = new Set();
+                        var highlightedWord = "none";
+                        var selectedScale = "linear"; // 0 -> linear, 1 -> logarithmic
+
+                        var artistSvg = d3.select(".artist-svg");
+                        var artistSvgWidth = artistSvg.style("width");
+                        var artistSvgHeight = artistSvg.style("height");
+                        artistSvgHeight = Number(artistSvgHeight.slice(0, artistSvgHeight.length - 2));
+                        artistSvgWidth = Number(artistSvgWidth.slice(0, artistSvgWidth.length - 2));
+
+                        var artistDataDict = {}
+                        var maxWordRanks = 1;
+                        var maxWordFrequency = 1;
+                        for(var artistTuple of artistData) {
+                            var artistFullName = artistTuple[0];
+                            var sortedLyricArr = artistTuple[1];
+                            var artistColor = artistColorMapping[artistFullName];
+                            var artistRankCount = sortedLyricArr.length;
+                            var artistMostFreqWordCount = sortedLyricArr[0][1];
+                            if (artistRankCount > maxWordRanks) {
+                                maxWordRanks = artistRankCount;
+                            }
+                            if (artistMostFreqWordCount > maxWordFrequency) {
+                                maxWordFrequency = artistMostFreqWordCount;
+                            }
+                            artistDataDict[ artistShortMapping[artistFullName] ] = {
+                                "fullName": artistFullName,
+                                "color": artistColor,
+                                "circleGroup": artistSvg.append("g"),
+                                "lyricCount": sortedLyricArr
+                            };
+                        }
+                    
+                        var prideSvg = d3.select(".pride-svg");
+                        var prideSvgWidth = prideSvg.style("width");
+                        var prideSvgHeight = prideSvg.style("height");
+                        var PADDING = 30;
+                        var numLyricsSliced = 100;
+
+                        // set up scales
+                        var linearRankScale = d3.scaleLinear()
+                        .domain([0, numLyricsSliced])
+                        .range([PADDING, (artistSvgWidth - PADDING)]);
+
+                        var linearFreqScale = d3.scaleLinear()
+                        .domain([0, maxWordFrequency])
+                        .range([(artistSvgHeight - PADDING), PADDING]);
+
+                        var logRankScale = d3.scaleLog()
+                        .domain([1, numLyricsSliced])
+                        .range([PADDING, (artistSvgWidth - PADDING)]);
+
+                        var logFreqScale = d3.scaleLog()
+                        .domain([1, maxWordFrequency])
+                        .range([(artistSvgHeight - PADDING), PADDING]);
+
+                        var linearRankAxis = d3.axisBottom(linearRankScale);
+                        var linearFreqAxis = d3.axisLeft(linearFreqScale);
+                        var logRankAxis = d3.axisBottom(logRankScale);
+                        var logFreqAxis = d3.axisLeft(logFreqScale);
+
+                        var linearScaleElementGroup = artistSvg.append("g")
+                        .attr("class", "linear-scale active");
+                        linearScaleElementGroup.append("g")
+                            .call(linearRankAxis)
+                            .attr("transform", "translate(0, " + (artistSvgHeight - PADDING) + ")");
+                        linearScaleElementGroup.append("g")
+                            .call(linearFreqAxis)
+                            .attr("transform", "translate(" + String(PADDING) + ", 0)");
+
+                        var logScaleElementGroup = artistSvg.append("g")
+                        .attr("class", "log-scale");
+
+                        logScaleElementGroup.append("g")
+                            .call(logRankAxis)
+                            .attr("transform", "translate(0, " + (artistSvgHeight - PADDING) + ")");
+
+                        logScaleElementGroup.append("g")
+                            .call(logFreqAxis)
+                            .attr("transform", "translate(" + PADDING + ", 0)");
+
+                        var plotZipfs = function plotZipfsLine(svg, xScale, yScale, artistName) {
+                            var artistDict = artistDataDict[artistName];
+                            var circleGroup = artistDict.circleGroup;
+                            var lyricArr = artistDict.lyricCount.slice(0, numLyricsSliced);
+                            var pathGenerator = d3.line()
+                                .x(function (d, i) { return xScale(i+1) })
+                                .y(function (d, i) { return yScale(d[1]) });
+                            
+                            var elementGroup = circleGroup.append("g")
+                                .attr("class", "element-group");
+                            
+                            elementGroup.selectAll("path")
+                                .data([lyricArr])
+                                .enter()
+                                .append("path")
+                                .attr("d", function (d, i) { return pathGenerator(d) })
+                                .attr("stroke", artistDict.color)
+                                .attr("fill", "none");
+                            
+                            elementGroup.selectAll("circle")
+                                .data(lyricArr)
+                                .enter().append("circle")
+                                .attr("cx", function (d, i) { return xScale(i+1) })
+                                .attr("cy", function (d) { return yScale(d[1]) })
+                                .attr("r", 3)
+                                .attr("fill", artistDict.color)
+                                .attr("opacity", "0.4");
+                        }
+                        
+                        var displayHighlightedWord = function highlightWord(artistName, xScale, yScale, word) {
+                            var artistDict = artistDataDict[artistName];
+                            var lyricArr = artistDict.lyricCount;
+                            var circleGroup = artistDict.circleGroup;
+                            for (var rank in lyricArr.slice(0, numLyricsSliced)) {
+                                if (lyricArr[rank][0] === word) {
+                                    console.log("Found workd!", rank);
+                                    circleGroup.append("circle")
+                                        .attr("cx", xScale(Number(rank) + 1))
+                                        .attr("cy", yScale(lyricArr[rank][1]))
+                                        .attr("r", 5)
+                                        .attr("fill", artistDict.color)
+                                        .attr("opacity", "0.9")
+                                        .attr("class", "highlight-word");
+                                    return;
+                                }
+                            }
+                            console.log("Not found in sliced version");
+                        }
+                        
+                        var hideHighlightedWord = function hideWord(artistName) {
+                            var circleGroup = artistDataDict[artistName].circleGroup;
+                            circleGroup.select(".highlight-word").remove();
+                        }
+
+                        var artistCells = d3.selectAll(".artist-img");
+                        artistCells.on('click', function () {
+                            var artistName = this.id;
+                            if (activeArtists.has(artistName)) {
+                                // artist already being displayed -> hide
+                                var artistDict = artistDataDict[artistName];
+                                var circleGroup = artistDict.circleGroup;
+                                circleGroup.select(".element-group").remove();
+                                hideHighlightedWord(artistName);
+                                activeArtists.delete(artistName);
+                            } else {
+                                // artist not being displayed -> display
+                                var curXScale = selectedScale === "linear" ? linearRankScale : logRankScale;
+                                var curYScale = selectedScale === "linear" ? linearFreqScale : logFreqScale;
+                                
+                                plotZipfs(artistSvg, curXScale, curYScale, artistName);
+                                if (highlightedWord !== "none") {
+                                    displayHighlightedWord(artistName, curXScale, curYScale, highlightedWord);
+                                }
+                                activeArtists.add(artistName);
+                            }
+                            this.classList.toggle("artist-img-active");
+                        });
+
+                        var wordSelector = d3.select(".word-selector");
+                        wordSelector.on('change', function () {
+                            var selectedWord = this.value;
+                            var curXScale = selectedScale === "linear" ? linearRankScale : logRankScale;
+                            var curYScale = selectedScale === "linear" ? linearFreqScale : logFreqScale;
+                            highlightedWord = selectedWord;
+                            
+                            activeArtists.forEach(function (artistName) {
+                                hideHighlightedWord(artistName);
+                                displayHighlightedWord(artistName, curXScale, curYScale, selectedWord);
+                            });
+                        });
+                        
+                        var scaleSelector = d3.select(".scale-selector");
+                        scaleSelector.on('change', function () {
+                            var pickedScale = this.value;
+                            selectedScale = pickedScale;
+                            
+                            activeArtists.forEach(function (artistName) {
+                                var artistDict = artistDataDict[artistName];
+                                var circleGroup = artistDict.circleGroup;
+                                
+                                circleGroup.select(".element-group").remove()
+                                hideHighlightedWord(artistName);
+                                
+                                var curXScale = selectedScale === "linear" ? linearRankScale : logRankScale;
+                                var curYScale = selectedScale === "linear" ? linearFreqScale : logFreqScale;
+                                
+                                plotZipfs(artistSvg, curXScale, curYScale, artistName);
+                                if (highlightedWord !== "none") {
+                                    displayHighlightedWord(artistName, curXScale, curYScale, highlightedWord);
+                                }
+                            });
+                        })
+
+                    }; // end of else
+                });
+            </script>
+        </main>
+        <script>
+        </script>    
+    </body>
+</html>
