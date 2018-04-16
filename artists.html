@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <title>Artist Concept</title>
         <style>
-            .svg-styles { border: 1px #000 solid; }
+/*            .svg-styles { border: 1px #000 solid; }*/
             .artist-cell { margin-top: 10px; }
             .artist-img { width: 100%; opacity: 1; transition: 0.3s; }
             .artist-label { text-align: center; }
@@ -18,8 +18,9 @@
             .taylor-overlay { background-color: pink; }
             .rihanna-overlay { background-color: blue; }
             .linkin-overlay { background-color: black; }
-            .overlay { transition: 0.3s; }
+            .overlay { transition: 0.3s; cursor: pointer; }
             .artist-img-active { opacity: 0.5; }
+            .artist-list { text-align: center; list-style: none; }
         </style>
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -32,7 +33,7 @@
                     Zipf's Law Proof of Concept
                 </div>
                 <div class='text-paragraph col-xs-offset-2 col-xs-8'>
-                    Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something 
+                    <b>Zipf's Law</b> in an empirical mathematical law named after the linguist George Kingsley Zipf who first proposed it in the first half of the 20th century. The law relates a word's <em>frequency</em> of occurence with its <em>rank</em> in its related corpus. In particular, given a large enough sample of words, the frequency of any word is inversely proportional to its rank in the sample's table of frequencies. Thus the most frequently occurring word will occur about twice as often as the second most frequent word, and so on.
                 </div>
             </div>
             
@@ -45,7 +46,19 @@
                     But Zipf's Law also applies to music lyrics!
                 </div>
                 <div class='text-paragraph col-xs-offset-2 col-xs-8'>
-                    Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something Hello World But Somethig Something 
+                    We felt as though this interesting mathematical law could be applied to lyrical data and the same patterns would emerge, so we aggregated lyrical data from six different artists. The artists we chose are additionally from a diverse set of genres to further see if the supposed trends would be contrained to one genre or not. Our artists include:
+                    <br/>
+                    <br/>
+                    <ul class="artist-list">
+                      <li> <b><span style="color: red;">Coldplay</span></b> of Alternative Rock</li>
+                      <li> <b><span style="color: orange;">Kanye West</span></b> of Hip-Hop </li>
+                      <li> <b><span style="color: green;">Keith Urban</span></b> of Country </li>
+                      <li> <b>Linkin Park</b> of Rock </li>
+                      <li> <b><span style="color: blue;">Rihanna</span></b> of R&B </li>
+                      <li> <b><span style="color: pink;">Taylor Swift</span></b> of Pop </li>
+                    </ul>
+                    <br/>
+                    The interface below will allow you to test our hypothesis yourself. Selecting an artist will allow you to view each of their respective lyrics on a <em>frequency</em> by <em>rank</em> chart.
                 </div>
             </div>
 
@@ -70,44 +83,44 @@
                 </div>
                 <div class='col-xs-2 artist-cell'>
                     <div class='overlay coldplay-overlay'>
-                        <img class='artist-img' id='coldplay' src='images/drake.jpg' alt='Coldplay Portrait'>
+                        <img class='artist-img' id='coldplay' src='images/coldplay.jpg' alt='Coldplay Portrait'>
                     </div>
 
                     <p class='artist-label'>Coldplay</p>
                 </div>
                 <div class='col-xs-2 artist-cell'>
                     <div class='overlay kanye-overlay'>
-                        <img class='artist-img' id='kanye' src='images/chance.jpg' alt='Kanye West Portrait'>
+                        <img class='artist-img' id='kanye' src='images/kanye.jpg' alt='Kanye West Portrait'>
                     </div>
                     <p class='artist-label'>Kanye West</p>
                 </div>
                 <div class='col-xs-2 artist-cell'>
                     <div class='overlay keith-overlay'>
-                        <img class='artist-img' id='keith' src='images/swift.jpg' alt='Keith Urban Portrait'>
+                        <img class='artist-img' id='keith' src='images/keith.jpg' alt='Keith Urban Portrait'>
                     </div>
                     <p class='artist-label'>Keith Urban</p>
                 </div>
                 <div class='col-xs-2 artist-cell'>
                     <div class='overlay linkin-overlay'>
-                        <img class='artist-img' id='linkin' src='images/kanye.jpg' alt='Linkin Park Portrait'>
+                        <img class='artist-img' id='linkin' src='images/linkin.jpg' alt='Linkin Park Portrait'>
                     </div>
                     <p class='artist-label'>Linkin Park</p>
                 </div>
                 <div class='col-xs-2 artist-cell'>
                     <div class='overlay rihanna-overlay'>
-                        <img class='artist-img' id='rihanna' src='images/kanye.jpg' alt='Rihanna Portrait'>
+                        <img class='artist-img' id='rihanna' src='images/rihanna.jpg' alt='Rihanna Portrait'>
                     </div>
                     <p class='artist-label'>Rihanna</p>
                 </div>
                 <div class='col-xs-2 artist-cell'>
                     <div class='overlay taylor-overlay'>
-                        <img class='artist-img' id='taylor' src='images/kanye.jpg' alt='Taylor Swift Portrait'>
+                        <img class='artist-img' id='taylor' src='images/swift.jpg' alt='Taylor Swift Portrait'>
                     </div>
                     <p class='artist-label'>Taylor Swift</p>
                 </div>
                 <div class='col-xs-8'>
                     Number Lyrics Accounted For: 
-                    <input class='zoom-slider' type="range" min="50" max="4000" step="1">
+                    <input class='zoom-slider' type="range" min="50" max="1100" value="100" step="1">
                 </div> 
             </div>
             <script>
@@ -122,8 +135,9 @@
                     .defer(d3.csv, LOCAL_FILEPATH + "linkinparklyrics.csv")
                     .defer(d3.csv, LOCAL_FILEPATH + "rihannalyrics.csv")
                     .defer(d3.csv, LOCAL_FILEPATH + "taylorswiftlyrics.csv")
+                    .defer(d3.csv, LOCAL_FILEPATH + "pride_parsed.csv")
                     .defer(d3.csv, LOCAL_FILEPATH + "stopwords.csv")
-                    .await(function(error, coldplayData, kanyewestData, keithurbanData, linkinparkData, rihannaData, taylorswiftData, stopwords) {
+                    .await(function(error, coldplayData, kanyewestData, keithurbanData, linkinparkData, rihannaData, taylorswiftData, prideData, stopwords) {
                     if (error) {
                         console.log("ERROR: " + error)
                     } else {
@@ -251,7 +265,76 @@
                         var prideSvg = d3.select(".pride-svg");
                         var prideSvgWidth = prideSvg.style("width");
                         var prideSvgHeight = prideSvg.style("height");
-                        var PADDING = 30;
+                        prideSvgHeight = Number(prideSvgHeight.slice(0, prideSvgHeight.length - 2));
+                        prideSvgWidth = Number(prideSvgWidth.slice(0, prideSvgWidth.length - 2));
+                        var PADDING = 50;
+                        
+                        var addLabels = function addSvgPlotLabels(title, yAxisLabel, xAxisLabel, svg) {
+                            var svgHeight = Number(svg.style("height").slice(0, svg.style("height").length - 2));
+                            var svgWidth = Number(svg.style("width").slice(0, svg.style("width").length - 2));
+                            svg.append("text")
+                                .attr("transform", "translate(" + (svgWidth/2) + ", 20)")
+                                .attr("text-anchor", "middle")
+                                .attr("alignment-baseline", "central")
+                                .text(title);
+                
+                            svg.append("text")
+                                .attr("transform", "rotate(270) translate(-" + (svgHeight/2)+ ", 0)")
+                                .attr("text-anchor", "middle")
+                                .attr("alignment-baseline", "central")
+                                .text(yAxisLabel);
+                            
+                            svg.append("text")
+                                .attr("transform", "translate(" + (svgWidth / 2) + ", " + (svgHeight - 15)+ ")")
+                                .attr("text-anchor", "middle")
+                                .attr("alignment-baseline", "central")
+                                .text(xAxisLabel);
+                        }
+                        
+                        var prideXScale = d3.scaleLinear()
+                            .domain([0, 500])
+                            .range([PADDING, (prideSvgWidth - PADDING)]);
+                        
+                        var prideYScale = d3.scaleLinear()
+                            .domain([0, prideData[0].count])
+                            .range([prideSvgHeight - PADDING, PADDING]);
+                        
+                        var prideRankAxis = d3.axisBottom(prideXScale);
+                        var prideFreqAxis = d3.axisLeft(prideYScale);
+                        
+                        prideSvg.append("g")
+                            .call(prideRankAxis)
+                            .attr("transform", "translate(0, " + (prideSvgHeight - PADDING) + ")");
+
+                        prideSvg.append("g")
+                            .call(prideFreqAxis)
+                            .attr("transform", "translate(" + String(PADDING) + ", 0)");
+                        
+                        prideData = prideData.slice(0, 500);
+                        
+                        var pathGenerator = d3.line()
+                            .x(function (d, i) { return prideXScale(i+1) })
+                            .y(function (d, i) { return prideYScale(d.count) });
+                        
+                        prideSvg.selectAll("path")
+                            .data([prideData])
+                            .enter()
+                            .append("path")
+                            .attr("d", function (d, i) { return pathGenerator(d) })
+                            .attr("stroke", "grey")
+                            .attr("fill", "none");
+                            
+                        prideSvg.selectAll("circle")
+                            .data(prideData)
+                            .enter().append("circle")
+                            .attr("cx", function (d, i) { return prideXScale(i+1) })
+                            .attr("cy", function (d) { return prideYScale(d.count) })
+                            .attr("r", 3)
+                            .attr("fill", "grey")
+                            .attr("opacity", "0.4");
+                        
+                        addLabels("Pride and Prejudice Word Usage", "Word Frequency", "Word Count Rank", prideSvg);
+                        
                         var numLyricsSliced = 100;
                         
                         var generateScale = function generateXScale() {
@@ -307,6 +390,9 @@
                         logScaleElementGroup.append("g")
                             .call(logFreqAxis)
                             .attr("transform", "translate(" + PADDING + ", 0)");
+                        
+                        addLabels("Musician Word Usage", "Word Frequency", "Word Count Rank", artistSvg);
+
 
                         var plotZipfs = function plotZipfsLine(svg, xScale, yScale, artistName) {
                             var artistDict = artistDataDict[artistName];
@@ -347,7 +433,7 @@
                                     circleGroup.append("circle")
                                         .attr("cx", xScale(Number(rank) + 1))
                                         .attr("cy", yScale(lyricArr[rank][1]))
-                                        .attr("r", 5)
+                                        .attr("r", 8)
                                         .attr("fill", artistDict.color)
                                         .attr("opacity", "0.9")
                                         .attr("class", "highlight-word");
