@@ -3,12 +3,14 @@
     <head>
         <meta charset="utf-8">
         <title>Artist Concept</title>
+        <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
         <style>
 /*            .svg-styles { border: 1px #000 solid; }*/
+            html { font-family: "Lato"; font-weight: 300; }
             .artist-cell { margin-top: 10px; }
             .artist-img { width: 100%; opacity: 1; transition: 0.3s; }
             .artist-label { text-align: center; }
-            .section-header { text-align: center; font-size: 24px; margin-bottom: 20px; }
+            .section-header { text-align: center; font-size: 24px; margin-bottom: 20px; font-family: "Lato"; font-weight: 400; }
             .linear-scale, .log-scale { opacity: 0; }
             .active { opacity: 1; }
             .row { margin-bottom: 50px; }
@@ -267,7 +269,7 @@
                         var prideSvgHeight = prideSvg.style("height");
                         prideSvgHeight = Number(prideSvgHeight.slice(0, prideSvgHeight.length - 2));
                         prideSvgWidth = Number(prideSvgWidth.slice(0, prideSvgWidth.length - 2));
-                        var PADDING = 50;
+                        var PADDING = 75;
                         
                         var addLabels = function addSvgPlotLabels(title, yAxisLabel, xAxisLabel, svg) {
                             var svgHeight = Number(svg.style("height").slice(0, svg.style("height").length - 2));
@@ -279,13 +281,13 @@
                                 .text(title);
                 
                             svg.append("text")
-                                .attr("transform", "rotate(270) translate(-" + (svgHeight/2)+ ", 0)")
+                                .attr("transform", "rotate(270) translate(-" + (svgHeight/2)+ ", 25)")
                                 .attr("text-anchor", "middle")
                                 .attr("alignment-baseline", "central")
                                 .text(yAxisLabel);
                             
                             svg.append("text")
-                                .attr("transform", "translate(" + (svgWidth / 2) + ", " + (svgHeight - 15)+ ")")
+                                .attr("transform", "translate(" + (svgWidth / 2) + ", " + (svgHeight - 25)+ ")")
                                 .attr("text-anchor", "middle")
                                 .attr("alignment-baseline", "central")
                                 .text(xAxisLabel);
