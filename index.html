@@ -361,7 +361,7 @@
                             .attr("fill", "grey")
                             .attr("opacity", "0.4")
                             .on('mouseover', function (d, i) {
-                                prideWordLabel.text(d[0]);
+                                prideWordLabel.text(d.word);
                             })
                             .on('mouseout', function (d, i) {
                                 prideWordLabel.text("");
