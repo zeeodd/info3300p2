@@ -460,8 +460,8 @@
                                 .attr("opacity", "0.4")
                                 .on('mouseover', function (d, i) {
                                     wordLabel.text(d[0]);
-                                    wordLabel.attr("x", xScale(i)+20)
-                                    wordLabel.attr("y", yScale(d[1])-5)
+                                    wordLabel.attr("x", xScale(i)+40)
+                                    wordLabel.attr("y", yScale(d[1])-15)
                                     wordLabel.attr("fill", artistDict.color)
                                     wordLabel.attr("pointer-events", "none")
                                 })
@@ -486,8 +486,8 @@
                                         .attr("class", "highlight-word")
                                         .on('mouseover', function () {
                                             wordLabel.text(word);
-                                            wordLabel.attr("x", xScale(rank)+20)
-                                            wordLabel.attr("y", yScale(lyricArr[rank][1])-5)
+                                            wordLabel.attr("x", xScale(rank)+40)
+                                            wordLabel.attr("y", yScale(lyricArr[rank][1])-15)
                                             wordLabel.attr("fill", artistDict.color)
                                             wordLabel.attr("pointer-events", "none")
                                         })
