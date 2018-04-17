@@ -5,6 +5,7 @@
         <title>Artist Concept</title>
         <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
         <style>
+/*            .svg-styles { border: 1px #000 solid; }*/
             html { font-family: "Lato"; font-weight: 300; }
             .artist-cell { margin-top: 10px; }
             .artist-img { width: 100%; opacity: 1; transition: 0.3s; }
@@ -34,7 +35,7 @@
                     Zipf's Law Proof of Concept
                 </div>
                 <div class='text-paragraph col-xs-offset-2 col-xs-8'>
-                    <b>Zipf's Law</b> in an empirical mathematical law named after the linguist George Kingsley Zipf who first proposed it in the first half of the 20th century. The law relates a word's <em>frequency</em> of occurence with its <em>rank</em> in its related corpus. In particular, given a large enough sample of words, the frequency of any word is inversely proportional to its rank in the sample's table of frequencies. Thus the most frequently occurring word will occur about twice as often as the second most frequent word, and so on. In the graph below, the <b>bolded black line</b> denotes a Zeta distribution that approximates Zipf's Law.
+                    <b>Zipf's Law</b> in an empirical mathematical law named after the linguist George Kingsley Zipf who first proposed it in the first half of the 20th century. The law relates a word's <em>frequency</em> of occurence with its <em>rank</em> in its related corpus. In particular, given a large enough sample of words, the frequency of any word is inversely proportional to its rank in the sample's table of frequencies. Thus the most frequently occurring word will occur about twice as often as the second most frequent word, and so on.
                 </div>
             </div>
 
@@ -44,10 +45,10 @@
 
             <div class='row'>
                 <div class='col-xs-12 section-header'>
-                    Applying Zipf's Law to Song Lyrics
+                    But Zipf's Law also applies to music lyrics!
                 </div>
                 <div class='text-paragraph col-xs-offset-2 col-xs-8'>
-                    We felt as though this interesting mathematical law could be applied to lyrical data and the same patterns would emerge, so we aggregated lyrical data from six different artists. The artists we chose are additionally from a diverse set of genres to further see if the supposed trends would be contrained to one genre or not. Our artists include:
+                    We felt as though this interesting mathematical law could be applied to lyrical data and the same patterns would emerge, so we aggregated lyrical data from six different artists. The artists we chose are additionally from a diverse set of genres to further see if the supposed trends would be constrained to one genre or not. Our artists include:
                     <br/>
                     <br/>
                     <ul class="artist-list">
@@ -59,7 +60,7 @@
                       <li> <b><span style="color: pink;">Taylor Swift</span></b> of Pop </li>
                     </ul>
                     <br/>
-                    The interface below will allow you to test our hypothesis yourself. Selecting an artist will allow you to view each of their respective lyrics on a <b>frequency</b> by <b>rank</b> chart. The chart's scale can be changed to view a log plot of the data for better comparisons of the curves. The slider below the chart gives you control over the number of words displayed. Finally, we included several words of interest that we discovered while investigating the data. We encourage you to select one of our designated words or hover over any of the other data points to discover your own lyrical relationships!
+                    The interface below will allow you to test our hypothesis yourself. Selecting an artist will allow you to view each of their respective lyrics on a <em>frequency</em> by <em>rank</em> chart.
                 </div>
             </div>
 
@@ -73,11 +74,6 @@
                         <option value="money">Money</option>
                         <option value="god">God</option>
                         <option value="black">Black</option>
-                        <option value="like">Like</option>
-                        <option value="never">Never</option>
-                        <option value="know">Know</option>
-                        <option value="baby">Baby</option>
-                        <option value="pain">Pain</option>
                     </select>
                 </div>
                 <div class='col-xs-4'>
@@ -125,7 +121,7 @@
                     <p class='artist-label'>Taylor Swift</p>
                 </div>
                 <div class='col-xs-8'>
-                    Number of Unique Words Accounted For:
+                    Number Lyrics Accounted For:
                     <input class='zoom-slider' type="range" min="50" max="1100" value="100" step="1">
                 </div>
             </div>
@@ -212,7 +208,9 @@
                             sortedArtistList.push([d[0], sorted]);
                         });
 
+                        console.log(sortedArtistList)
                         artistData = sortedArtistList;
+                        console.log(artistData);
 
                         var artistShortMapping = {
                             "Coldplay": "coldplay",
@@ -237,14 +235,12 @@
                         var highlightedWord = "none";
                         var selectedScale = "linear"; // 0 -> linear, 1 -> logarithmic
 
-                        // grab svg meta information and reference
                         var artistSvg = d3.select(".artist-svg");
                         var artistSvgWidth = artistSvg.style("width");
                         var artistSvgHeight = artistSvg.style("height");
                         artistSvgHeight = Number(artistSvgHeight.slice(0, artistSvgHeight.length - 2));
                         artistSvgWidth = Number(artistSvgWidth.slice(0, artistSvgWidth.length - 2));
 
-                        // parse data into a dataDictionary for each artist
                         var artistDataDict = {}
                         var maxWordRanks = 1;
                         var maxWordFrequency = 1;
@@ -268,7 +264,6 @@
                             };
                         }
 
-                        // grab pride and prejudice svg meta information
                         var prideSvg = d3.select(".pride-svg");
                         var prideSvgWidth = prideSvg.style("width");
                         var prideSvgHeight = prideSvg.style("height");
@@ -276,7 +271,6 @@
                         prideSvgWidth = Number(prideSvgWidth.slice(0, prideSvgWidth.length - 2));
                         var PADDING = 75;
 
-                        // adds text labels to a given svg, returning a reference to the dynamic word label
                         var addLabels = function addSvgPlotLabels(title, yAxisLabel, xAxisLabel, svg) {
                             var svgHeight = Number(svg.style("height").slice(0, svg.style("height").length - 2));
                             var svgWidth = Number(svg.style("width").slice(0, svg.style("width").length - 2));
@@ -300,7 +294,7 @@
                                 .text(xAxisLabel);
 
                             var wordLabel = svg.append("text")
-                                .attr("transform", "translate(0,0)")
+                                .attr("transform", "translate(" + (svgWidth - 150) + ", 80)")
                                 .attr("text-anchor", "middle")
                                 .attr("alignment-baseline", "central")
                                 .text("");
@@ -329,24 +323,18 @@
 
                         prideData = prideData.slice(0, 500);
 
-                        var baselineData = [];
-                        for (var i = 1; i <= 500; i++) {
-                            baselineData.push(Math.min((9000/i), 4200));
-                        }
-
-                        var pridePathGen = d3.line()
-                            .x(function (d, i) { return prideXScale(i) })
-                            .y(function (d, i) { return prideYScale(d) });
+                        var pathGenerator = d3.line()
+                            .x(function (d, i) { return prideXScale(i+1) })
+                            .y(function (d, i) { return prideYScale(d.count) });
 
                         var prideWordLabel = addLabels("Pride and Prejudice Word Usage", "Word Frequency", "Word Count Rank", prideSvg);
 
-                        prideSvg.selectAll("path.baseline")
-                            .data([baselineData])
+                        prideSvg.selectAll("path")
+                            .data([prideData])
                             .enter()
                             .append("path")
-                            .attr("d", function (d) { return pridePathGen(d) })
-                            .attr("stroke", "black")
-                            .attr("stroke-width", 3)
+                            .attr("d", function (d, i) { return pathGenerator(d) })
+                            .attr("stroke", "grey")
                             .attr("fill", "none");
 
                         prideSvg.selectAll("circle")
@@ -358,16 +346,16 @@
                             .attr("fill", "grey")
                             .attr("opacity", "0.4")
                             .on('mouseover', function (d, i) {
-                                prideWordLabel.text(d.word);
+                                prideWordLabel.text(d[0]);
                             })
                             .on('mouseout', function (d, i) {
                                 prideWordLabel.text("");
                             });
 
-                        // use only the first numLyricsSliced words
+
+
                         var numLyricsSliced = 100;
 
-                        // returns scales for the x-axis
                         var generateScale = function generateXScale() {
                             var linearScale = d3.scaleLinear()
                                 .domain([0, numLyricsSliced])
@@ -387,20 +375,17 @@
                             .domain([0, maxWordFrequency])
                             .range([(artistSvgHeight - PADDING), PADDING]);
 
-                        // instead make this linear as well, but able to change to log if needed
                         var logRankScale = scales.linear;
 
                         var logFreqScale = d3.scaleLog()
                             .domain([1, maxWordFrequency])
                             .range([(artistSvgHeight - PADDING), PADDING]);
 
-                        // create 4 axes
                         var linearRankAxis = d3.axisBottom(linearRankScale);
                         var linearFreqAxis = d3.axisLeft(linearFreqScale);
                         var logRankAxis = d3.axisBottom(logRankScale);
                         var logFreqAxis = d3.axisLeft(logFreqScale);
 
-                        // contains the 2 axes in a group for linear scales
                         var linearScaleElementGroup = artistSvg.append("g")
                             .attr("class", "linear-scale active");
 
@@ -413,7 +398,6 @@
                             .call(linearFreqAxis)
                             .attr("transform", "translate(" + String(PADDING) + ", 0)");
 
-                        // contains the 2 axes in a group for log scales
                         var logScaleElementGroup = artistSvg.append("g")
                             .attr("class", "log-scale");
 
@@ -428,7 +412,7 @@
 
                         var musicWordLabel = addLabels("Musician Word Usage", "Word Frequency", "Word Count Rank", artistSvg);
 
-                        // draws circles and a line through the points using the given scales and svg
+
                         var plotZipfs = function plotZipfsLine(svg, xScale, yScale, artistName, wordLabel) {
                             var artistDict = artistDataDict[artistName];
                             var circleGroup = artistDict.circleGroup;
@@ -440,7 +424,6 @@
                             var elementGroup = circleGroup.append("g")
                                 .attr("class", "element-group");
 
-                            // draw path through points
                             elementGroup.selectAll("path")
                                 .data([lyricArr])
                                 .enter()
@@ -449,7 +432,6 @@
                                 .attr("stroke", artistDict.color)
                                 .attr("fill", "none");
 
-                            // draw circles on each point, adding hover functionality
                             elementGroup.selectAll("circle")
                                 .data(lyricArr)
                                 .enter().append("circle")
@@ -460,22 +442,19 @@
                                 .attr("opacity", "0.4")
                                 .on('mouseover', function (d, i) {
                                     wordLabel.text(d[0]);
-                                    wordLabel.attr("x", xScale(i)+20)
-                                    wordLabel.attr("y", yScale(d[1])-5)
-                                    wordLabel.attr("fill", artistDict.color)
                                 })
                                 .on('mouseout', function (d, i) {
                                     wordLabel.text("");
                                 });
                         }
 
-                        // Draws a large, distinguishing point on an svg for a selected word
                         var displayHighlightedWord = function highlightWord(artistName, xScale, yScale, word, wordLabel) {
                             var artistDict = artistDataDict[artistName];
                             var lyricArr = artistDict.lyricCount;
                             var circleGroup = artistDict.circleGroup;
                             for (var rank in lyricArr.slice(0, numLyricsSliced)) {
                                 if (lyricArr[rank][0] === word) {
+                                    console.log("Found workd!", rank);
                                     circleGroup.append("circle")
                                         .attr("cx", xScale(Number(rank) + 1))
                                         .attr("cy", yScale(lyricArr[rank][1]))
@@ -494,13 +473,11 @@
                             }
                         }
 
-                        // removed the circle for an artist for an old highlighted word
                         var hideHighlightedWord = function hideWord(artistName) {
                             var circleGroup = artistDataDict[artistName].circleGroup;
                             circleGroup.select(".highlight-word").remove();
                         }
 
-                        // replots all the artists on the music SVG graph
                         var replotArtists = function replotActiveArtists() {
                             activeArtists.forEach(function (artistName) {
                                 var artistDict = artistDataDict[artistName];
@@ -519,7 +496,6 @@
                             });
                         }
 
-                        // updates the axes when the user changes the value of the slider and replots them
                         var updateAxes = function updateAxes(numRanks) {
                             numLyricsSliced = numRanks;
                             var scales = generateScale();
@@ -544,7 +520,6 @@
                                 .attr("class", "x-element-axis");
                         }
 
-                        // when user clicks an image, toggle the artist on the svg
                         var artistCells = d3.selectAll(".artist-img");
                         artistCells.on('click', function () {
                             var artistName = this.id;
@@ -569,7 +544,6 @@
                             this.classList.toggle("artist-img-active");
                         });
 
-                        // when the user selects a word, highlight that word on the svg and remove the other instances
                         var wordSelector = d3.select(".word-selector");
                         wordSelector.on('change', function () {
                             var selectedWord = this.value;
@@ -583,7 +557,6 @@
                             });
                         });
 
-                        // when the user selects a scale, update the graph so it is on the new scale
                         var scaleSelector = d3.select(".scale-selector");
                         scaleSelector.on('change', function () {
                             var pickedScale = this.value;
@@ -595,7 +568,6 @@
                             replotArtists();
                         });
 
-                        // when the user changes the slider, update the x-axis so it changes accordingly
                         var zoomSlider = d3.select(".zoom-slider");
                         zoomSlider.on("input", function () {
                             var numRanks = this.value;
