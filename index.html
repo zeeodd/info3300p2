@@ -44,7 +44,7 @@
             
             <div class='row'>
                 <div class='col-xs-12 section-header'>
-                    But Zipf's Law also applies to music lyrics!
+                    Applying Zipf's Law to Song Lyrics
                 </div>
                 <div class='text-paragraph col-xs-offset-2 col-xs-8'>
                     We felt as though this interesting mathematical law could be applied to lyrical data and the same patterns would emerge, so we aggregated lyrical data from six different artists. The artists we chose are additionally from a diverse set of genres to further see if the supposed trends would be contrained to one genre or not. Our artists include:
@@ -59,7 +59,7 @@
                       <li> <b><span style="color: pink;">Taylor Swift</span></b> of Pop </li>
                     </ul>
                     <br/>
-                    The interface below will allow you to test our hypothesis yourself. Selecting an artist will allow you to view each of their respective lyrics on a <em>frequency</em> by <em>rank</em> chart.
+                    The interface below will allow you to test our hypothesis yourself. Selecting an artist will allow you to view each of their respective lyrics on a <b>frequency</b> by <b>rank</b> chart. The chart's scale can be changed to view a log plot of the data for better comparisons of the curves. The slider below the chart gives you control over the number of words displayed. Finally, we included several words of interest that we discovered while investigating the data. We encourage you to select one of our designated words or hover over any of the other data points to discover your own lyrical relationships!
                 </div>
             </div>
 
@@ -267,8 +267,6 @@
                                 "lyricCount": sortedLyricArr
                             };
                         }
-                        
-                        console.log(artistDataDict);
                     
                         // grab pride and prejudice svg meta information
                         var prideSvg = d3.select(".pride-svg");
@@ -335,7 +333,6 @@
                         for (var i = 1; i <= 500; i++) {
                             baselineData.push(Math.min((9000/i), 4200));
                         }
-                        console.log(baselineData);
                         
                         var pridePathGen = d3.line()
                             .x(function (d, i) { return prideXScale(i) })
