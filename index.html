@@ -463,6 +463,7 @@
                                     wordLabel.attr("x", xScale(i)+20)
                                     wordLabel.attr("y", yScale(d[1])-5)
                                     wordLabel.attr("fill", artistDict.color)
+                                    wordLabel.attr("pointer-events", "none")
                                 })
                                 .on('mouseout', function (d, i) {
                                     wordLabel.text("");
@@ -485,6 +486,10 @@
                                         .attr("class", "highlight-word")
                                         .on('mouseover', function () {
                                             wordLabel.text(word);
+                                            wordLabel.attr("x", xScale(rank)+20)
+                                            wordLabel.attr("y", yScale(lyricArr[rank][1])-5)
+                                            wordLabel.attr("fill", artistDict.color)
+                                            wordLabel.attr("pointer-events", "none")
                                         })
                                         .on('mouseout', function (d, i) {
                                             wordLabel.text("");
