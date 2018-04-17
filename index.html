@@ -34,7 +34,7 @@
                     Zipf's Law Proof of Concept
                 </div>
                 <div class='text-paragraph col-xs-offset-2 col-xs-8'>
-                    <b>Zipf's Law</b> in an empirical mathematical law named after the linguist George Kingsley Zipf who first proposed it in the first half of the 20th century. The law relates a word's <em>frequency</em> of occurence with its <em>rank</em> in its related corpus. In particular, given a large enough sample of words, the frequency of any word is inversely proportional to its rank in the sample's table of frequencies. Thus the most frequently occurring word will occur about twice as often as the second most frequent word, and so on.
+                    <b>Zipf's Law</b> in an empirical mathematical law named after the linguist George Kingsley Zipf who first proposed it in the first half of the 20th century. The law relates a word's <em>frequency</em> of occurence with its <em>rank</em> in its related corpus. In particular, given a large enough sample of words, the frequency of any word is inversely proportional to its rank in the sample's table of frequencies. Thus the most frequently occurring word will occur about twice as often as the second most frequent word, and so on. In the graph below, the <b>bolded black line</b> denotes a Zeta distribution that approximates Zipf's Law.
                 </div>
             </div>
             
@@ -324,18 +324,25 @@
                         
                         prideData = prideData.slice(0, 500);
                         
-                        var pathGenerator = d3.line()
-                            .x(function (d, i) { return prideXScale(i+1) })
-                            .y(function (d, i) { return prideYScale(d.count) });
+                        var baselineData = [];
+                        for (var i = 1; i <= 500; i++) {
+                            baselineData.push(Math.min((9000/i), 4200));
+                        }
+                        console.log(baselineData);
+                        
+                        var pridePathGen = d3.line()
+                            .x(function (d, i) { return prideXScale(i) })
+                            .y(function (d, i) { return prideYScale(d) });
                         
                         var prideWordLabel = addLabels("Pride and Prejudice Word Usage", "Word Frequency", "Word Count Rank", prideSvg);
                         
-                        prideSvg.selectAll("path")
-                            .data([prideData])
+                        prideSvg.selectAll("path.baseline")
+                            .data([baselineData])
                             .enter()
                             .append("path")
-                            .attr("d", function (d, i) { return pathGenerator(d) })
-                            .attr("stroke", "grey")
+                            .attr("d", function (d) { return pridePathGen(d) })
+                            .attr("stroke", "black")
+                            .attr("stroke-width", 3)
                             .attr("fill", "none");
                             
                         prideSvg.selectAll("circle")
